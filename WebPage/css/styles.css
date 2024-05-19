@@ -1,0 +1,90 @@
+/* variables */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    --navbar-bg-color: rgba(255, 255, 255, 1);
+    --navbar-height: 60px;
+    --navbar-padding: 10px 20px;
+    --logo-height: 50px;
+    --profile-icon-height: 40px;
+    --menu-link-color: rgb(0, 0, 0);
+    --menu-link-margin: 0 20px;
+    --button-border-radius: 20px;
+    --button-font-size: 16px;
+    --button-padding: 10px;
+    --green-button-bg-color: rgb(65, 105, 225); /* Blue color */
+    --blue-button-bg-color: grey;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--navbar-padding);
+    height: var(--navbar-height);
+}
+
+.background {
+    min-height: calc(100vh - var(--navbar-height)); /* Высота экрана минус высота navbar */
+    width: 100%;
+    object-fit: cover; /* Растягиваем картинку, чтобы она заполнила все пространство */
+    position: relative;
+}
+
+.logo {
+    height: var(--logo-height);
+    display: block; 
+    margin-bottom: -8px;
+    object-fit: contain;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+}
+
+.menu a {
+    color: var(--menu-link-color);
+    text-decoration: none;
+    margin: var(--menu-link-margin);
+}
+
+.profile-icon {
+    height: var(--profile-icon-height); /* Размер значка профиля */
+    border-radius: 50%; 
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%; /* Положение по вертикали - на 50% относительно родительского контейнера */
+    left: 50%; /* Положение по горизонтали - на 50% относительно родительского контейнера */
+    transform: translate(-50%, -50%); /* Смещаем контейнер на -50% от его ширины и высоты */
+}
+
+.center-button {
+    border: none;
+    color: white;
+    padding: var(--button-padding);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: var(--button-font-size);
+    margin: 4px 8px; 
+    cursor: pointer;
+    border-radius: var(--button-border-radius);
+}
+
+.green-button {
+    background-color: var(--green-button-bg-color); /* Blue color */
+}
+
+.blue-button {
+    background-color: var(--blue-button-bg-color); /* Grey color */
+}
+
+* {
+    box-sizing: border-box;
+}
