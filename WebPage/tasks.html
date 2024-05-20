@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Page</title>
+    <link rel="stylesheet" href="css/tasks.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="img/LogoOneTask.png" alt="Logo" class="logo"> 
+        <div class="menu">
+            <a href="#home">Home</a>
+            <a href="#tasks">Tasks</a>
+            <a href="#about">About Us</a>
+        </div>
+        <img src="img/ProfileIcon.png" alt="Profile Icon" class="profile-icon"> 
+    </div>
+
+    <main>
+        <div class="filters">
+            <div class="dropdown">
+                <button class="filter-button">
+                    <img src="img/task-type-icon.png" alt="Task type">
+                    <span>Task type</span>
+                    <img src="img/task-type-icon-right.png" alt="Task type right">
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">Type 1</a>
+                    <a href="#">Type 2</a>
+                    <a href="#">Type 3</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="filter-button">
+                    <img src="img/post-at-icon.png" alt="Task type right">
+                    <span>Posted at</span>
+                    <img src="img/task-type-icon-right.png" alt="Task type right">
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">Today</a>
+                    <a href="#">Last Week</a>
+                    <a href="#">Last Month</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="filter-button">
+                    <img src="img/price-icon.png" alt="Price">
+                    <span>Price</span>
+                    <img src="img/task-type-icon-right.png" alt="Task type right">
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">Low to High</a>
+                    <a href="#">High to Low</a>
+                </div>
+            </div>
+        </div>
+        <div class="tasks">
+            <div class="task-card">
+                <h3>Redesign of Mobile E-commerce App UX/UI</h3>
+                <p>Posted 1 day ago</p>
+                <p>Budget: from 200</p>
+                <p>We are looking for an experienced UX/UI designer to revamp our existing mobile e-commerce application. The goal is to enhance user engagement by simplifying na <span class="more">see more</span></p>
+                <div class="skills">
+                    <button>Frontend</button>
+                    <button>Frontend</button>
+                    <button>Frontend</button>
+                </div>
+            </div>
+            <!-- Repeat .task-card as needed -->
+        </div>
+    </main>
+
+
+</body>
+</html>
