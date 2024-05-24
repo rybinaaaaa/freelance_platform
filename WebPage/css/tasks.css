@@ -12,7 +12,7 @@ body {
     --button-border-radius: 20px;
     --button-font-size: 16px;
     --button-padding: 10px;
-    --green-button-bg-color: rgb(65, 105, 225); /* Blue color */
+    --green-button-bg-color: rgb(65, 105, 225);
     --blue-button-bg-color: grey;
 }
 
@@ -69,16 +69,7 @@ nav a {
     font-size: 18px;
 }
 
-.profile-icon {
-    width: 30px;
-    height: 30px;
-    background-color: #ccc;
-    border-radius: 50%;
-}
 
-main {
-    padding: 20px;
-}
 
 .filters {
     display: flex;
@@ -141,16 +132,18 @@ main {
 
 .tasks {
     display: grid;
+
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     justify-content: center;
-    width: 1000px;
-    height: 150px;
 }
 
 .task-card {
+    margin-left: 30px;
     background-color: #fff;
-    padding: 20px;
+    width: 500px;
+    height: 250px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -162,16 +155,18 @@ main {
 
 .task-card h3 {
     margin-top: 0;
+    font-size: 12px;
 }
 
 .task-card p {
+    font-size: 12px;
     text-align: left;
 }
 
 .task-card .skills {
     display: left;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 5px;
     justify-content: center;
 }
 
@@ -183,7 +178,7 @@ main {
     background-color: #f0f0f0;
     cursor: pointer;
     border-radius: 30px;
-    margin: 30px;
+    margin-left: 50px;
 }
 
 .task-card .skills button:hover {

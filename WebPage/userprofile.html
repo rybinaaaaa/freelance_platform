@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="css/userProfile.css">
+</head>
+<body>
+    <div class="navbar">
+        <img src="img/LogoOneTask.png" alt="Logo" class="logo"> 
+        <div class="menu">
+            <a href="#home">Home</a>
+            <a href="#tasks">Tasks</a>
+            <a href="#about">About Us</a>
+        </div>
+        
+        <div class="profile-menu">
+            <img src="img/ProfileIcon.png" alt="Profile Icon" class="profile-icon"> 
+            <span>Jiří</span>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <div class="profile-container">
+            <div class="profile-content">
+                <h2>Personal information</h2>
+                <form action="#" method="POST">
+                    <label for="firstName">First name</label>
+                    <input type="text" id="firstName" name="firstName" value="Jiří">
+                    
+                    <label for="lastName">Last name</label>
+                    <input type="text" id="lastName" name="lastName" value="Procházka">
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="************">
+                    
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username">
+                    
+                    <button type="submit">Save changes</button>
+                </form>
+            </div>
+        
+            <div class="profile-sidebar">
+                <a href="#show-resume" class="sidebar-link">
+                    <img src="img/resume.png" alt="Show Resume" class="sidebar-icon">
+                    <span>Show Resume</span>
+                </a>
+                <a href="#upload-resume" class="sidebar-link">
+                    <img src="img/updateResume.png" alt="Upload Resume" class="sidebar-icon">
+                    <span>Upload Resume</span>
+                </a>
+            </div>
+
+
+        </div>
+    </main>
+</body>
+</html>

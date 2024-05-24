@@ -1,0 +1,150 @@
+/* variables */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    --navbar-bg-color: rgba(255, 255, 255, 1);
+    --navbar-height: 60px;
+    --navbar-padding: 10px 20px;
+    --logo-height: 50px;
+    --profile-icon-height: 40px;
+    --menu-link-color: rgb(0, 0, 0);
+    --menu-link-margin: 0 20px;
+    --button-border-radius: 20px;
+    --button-font-size: 16px;
+    --button-padding: 10px;
+    --green-button-bg-color: rgb(65, 105, 225); 
+    --blue-button-bg-color: grey;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--navbar-padding);
+    height: var(--navbar-height);
+}
+
+.logo {
+    height: var(--logo-height);
+    display: block;
+    margin-bottom: -8px;
+    object-fit: contain;
+}
+
+.menu {
+    display: flex;
+    font-weight: 10;
+    align-items: center;
+}
+
+.menu a {
+    font-size: large;
+    font-weight: 700;
+    color: var(--menu-link-color);
+    text-decoration: none;
+    margin: var(--menu-link-margin);
+}
+
+.profile-icon {
+    height: var(--profile-icon-height);
+    border-radius: 50%;
+}
+
+.main-container {
+    display: flex;
+    margin-left: 550px;
+    justify-content: center; 
+    align-items: flex-start; 
+    padding: 20px;
+}
+
+.profile-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px; 
+}
+
+.profile-content {
+    width: 700px; 
+    height: 700px; 
+    padding: 20px;
+    border-radius: 8px;
+
+}
+
+.profile-sidebar {
+    width: 100px; 
+    padding: 20px;
+    border-radius: 8px;
+    margin-right: 500px; 
+}
+
+.profile-sidebar .sidebar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.profile-sidebar .sidebar-icon {
+    width: 50px; 
+    height: 50px; 
+    margin-bottom: 10px;
+}
+
+.profile-sidebar .sidebar-link span {
+    font-size: 16px; 
+}
+
+
+.profile-content h2 {
+    margin-bottom: 50px;
+}
+
+.profile-content label {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.profile-content input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.profile-content button {
+    width: 220px;
+    padding: 10px 20px;
+    margin-left: 180px;
+    background-color: rgb(40, 124, 65);;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.profile-content button:hover {
+    background-color: #555;
+}
+
+.resume-sidebar a {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.resume-sidebar img {
+    height: 10px;
+    margin-left: 5px;
+}
+
+* {
+    box-sizing: border-box;
+}

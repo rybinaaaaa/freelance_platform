@@ -5,8 +5,8 @@ html, body {
 }
 
 .main-container {
-    display: flex; /* Используем flexbox для горизонтального расположения блоков */
-    height: 100vh; /* Высота контейнера на всю высоту экрана */
+    display: flex; 
+    height: 100vh; 
 }
 
 .content-container {
@@ -14,21 +14,21 @@ html, body {
     flex-direction: column;
     justify-content: center;
     padding: 20px;
-    width: 50%; /* Занимает 50% ширины экрана */
+    width: 50%; 
 }
 
 .image-container {
     width: 500px;
-    flex: 1; /* Занимает оставшееся пространство */
+    flex: 1; 
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .side-image {
-    width: 80%; /* Ширина картинки на всю ширину контейнера */
-    height: 95vh; /* Высота картинки на всю высоту экрана */
-    object-fit: cover; /* Сохранение пропорций картинки */
+    width: 80%; 
+    height: 95vh; 
+    object-fit: cover; 
 }
 
 .logo {

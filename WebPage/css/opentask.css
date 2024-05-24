@@ -22,8 +22,8 @@ body {
     justify-content: space-between;
     padding: var(--navbar-padding);
     height: var(--navbar-height);
+    background-color: var(--navbar-bg-color);
 }
-
 
 .logo {
     height: var(--logo-height);
@@ -34,12 +34,11 @@ body {
 
 .menu {
     display: flex;
-    font-weight: 10;
     align-items: center;
 }
 
 .menu a {
-     font-size: large;
+    font-size: large;
     font-weight: 700; 
     color: var(--menu-link-color);
     text-decoration: none;
@@ -52,39 +51,55 @@ body {
 }
 
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, -50%); 
+    padding: 20px;
+}
+
+.container h1
+{
+    
+    text-align: center;
+    color: #000000;
+}
+
+.container h2 {
+    color: #3576ca;
+}
+
+
+.container p, .container ul {
+    color: #000000;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.enter-icon {
+    height: 16px; 
+    vertical-align: middle;
+    margin-left: 5px; 
 }
 
 .center-button {
-    border: none;
-    color: white;
-    padding: var(--button-padding);
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: var(--button-font-size);
-    margin: 4px 8px; 
-    cursor: pointer;
-    border-radius: var(--button-border-radius);
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-
-.background{
-    height: auto;
-    width: 1600px;
-}
 .green-button {
-    background-color: var(--green-button-bg-color); 
+    padding: 15px 20px;
+    font-size: 25px;
+    color: #000000;
+    background-color: rgb(40, 124, 65);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.blue-button {
-    background-color: var(--blue-button-bg-color); 
+.green-button:hover {
+    background-color: #555;
 }
 
 * {
