@@ -53,10 +53,11 @@ public class TaskService {
      */
     @CachePut(key = "#task.id")
     @Transactional
-    public void save(Task task){
+    public Task save(Task task){
         Objects.requireNonNull(task);
         taskRepo.save(task);
         taskChangesProducer.sendMessage(taskChangesProducer.toJsonString(task), TaskPosted);
+        return task;
     }
 
     /**
@@ -182,6 +183,11 @@ public class TaskService {
         } else {
             return taskRepo.findAllPostedByCustomerIdAndStatusDeadlineNotExpired(userId, taskStatus);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Task> findAll(){
+        return taskRepo.findAll();
     }
 
     /**

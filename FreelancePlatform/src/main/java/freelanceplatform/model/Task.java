@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Task extends AbstractEntity {
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
@@ -53,9 +54,9 @@ public class Task extends AbstractEntity {
     @Column
     private LocalDateTime postedDate;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "solution_id")
-    @JsonIgnore
     private Solution solution;
 
     public Task(User customer, String title, String problem, LocalDateTime deadline, Double payment, TaskType type) {
@@ -67,21 +68,5 @@ public class Task extends AbstractEntity {
         this.payment = payment;
         this.type = type;
         this.postedDate = LocalDateTime.now();
-    }
-
-    @Override
-    public String toString() {
-        return "Task{" +
-                "customer=" + customer.getUsername() +
-                ", freelancer=" + freelancer.getUsername() +
-                ", title='" + title + '\'' +
-                ", problem='" + problem + '\'' +
-                ", deadline=" + deadline +
-                ", status=" + status +
-                ", payment=" + payment +
-                ", assignedDate=" + assignedDate +
-                ", submittedDate=" + submittedDate +
-                ", postedDate=" + postedDate +
-                '}';
     }
 }

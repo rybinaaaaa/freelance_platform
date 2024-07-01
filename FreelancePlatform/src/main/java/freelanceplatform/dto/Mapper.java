@@ -66,6 +66,7 @@ public class Mapper {
 
     /**
      * Converts user to json
+     *
      * @param user to convert
      * @return json string
      */
@@ -105,8 +106,8 @@ public class Mapper {
         proposal.setId(proposalDTO.getId());
         proposal.setFreelancer(
                 Optional.ofNullable(proposalDTO.getFreelancerId())
-                .map(userService::find)
-                .orElse(null));
+                        .map(userService::find)
+                        .orElse(null));
         proposal.setTask(
                 Optional.ofNullable(proposalDTO.getTaskId())
                         .map(taskService::getById)
@@ -238,6 +239,19 @@ public class Mapper {
                 Optional.ofNullable(proposalCreationDTO.getTaskId())
                         .map(taskService::getById)
                         .orElse(null)
+        );
+    }
+
+    /**
+     * Converts a ProposalCreationDTO to a Proposal entity.
+     *
+     * @param proposal the Proposal to convert
+     * @return the converted ProposalCreationDTO
+     */
+    public ProposalCreationDTO proposalToProposalCreationDTO(Proposal proposal) {
+        return new ProposalCreationDTO(
+                Optional.ofNullable(proposal.getFreelancer()).map(User::getId).orElse(null), // freelancer
+                Optional.ofNullable(proposal.getTask()).map(Task::getId).orElse(null) // task
         );
     }
 }
