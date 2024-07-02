@@ -7,10 +7,7 @@ import freelanceplatform.dto.entityCreationDTO.ProposalCreationDTO;
 import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
 import freelanceplatform.dto.entityCreationDTO.UserCreationDTO;
 import freelanceplatform.dto.entityDTO.*;
-import freelanceplatform.model.Feedback;
-import freelanceplatform.model.Proposal;
-import freelanceplatform.model.Task;
-import freelanceplatform.model.User;
+import freelanceplatform.model.*;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +57,7 @@ public class Mapper {
                 .lastName(userDTO.getLastName())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
-                .role(userDTO.getRole())
+                .role(Role.USER)
                 .build();
     }
 
