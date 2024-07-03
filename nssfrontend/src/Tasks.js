@@ -5,48 +5,81 @@ import { useNavigate } from 'react-router-dom';
 
 const Tasks = () => {
     const navigate = useNavigate();
-    const [tasks, setTasks] = useState([]); // Все задачи
+    const [tasks, setTasks] = useState([]); // All tasks
     const [currentPage, setCurrentPage] = useState(0);
+    const [loading, setLoading] = useState(true); // Loading state
+    const [error, setError] = useState(null); // Error state
     const tasksPerPage = 4;
 
     useEffect(() => {
-        // Загрузите задачи из localStorage или другого источника
-        const loadedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        setTasks(loadedTasks);
+        const fetchTasks = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('http://localhost:8080/rest/tasks/taskBoard?fromNewest=false'); // Fetching tasks from backend
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                // Transform data to match the desired format
+                const transformedData = data.map(task => ({
+                    ...task,
+                    types: [task.type],
+                    postedDate: task.deadline // Assuming 'deadline' is the posted date for this example
+                }));
+                setTasks(transformedData);
+                setLoading(false);
+            } catch (error) {
+                setError('Failed to load tasks');
+                setLoading(false);
+            }
+        };
+
+        fetchTasks();
     }, []);
 
-    // Вычислите текущие задачи для отображения
+    // Calculate current tasks to display
     const indexOfLastTask = (currentPage + 1) * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
 
-    // Обработка изменения страницы
+    // Handle page change
     const handlePageClick = (event) => {
         setCurrentPage(Number(event.selected));
     };
-    const handleSeeMoreClick = () => {
-        navigate('/TaskDescription'); // Простой переход на страницу TaskDescription
+
+    const handleSeeMoreClick = (taskId) => {
+        navigate(`/TaskDescription/${taskId}`);
     };
+
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div className="tasks-container">
-            {currentTasks.map((task, index) => (  // Используйте currentTasks здесь
+            {currentTasks.map((task, index) => (  // Use currentTasks here
                 <div key={index} className="task-card">
                     <h3>{task.title}</h3>
                     <p>Posted {new Date(task.postedDate).toLocaleDateString()}</p>
                     <p>Budget: from {task.payment}</p>
                     <p>
                         {task.problem.substring(0, 30)}...
-                        <button className="see-more" onClick={handleSeeMoreClick}>see more</button>
+                        <button className="see-more" onClick={() => handleSeeMoreClick(task.id)}>see more</button>
+
                     </p>
                     <div className="tags">
-                        {task.types.map((type, idx) => (
+                    {task.types.map((type, idx) => (
                             <span key={idx} className="tag">{type}</span>
                         ))}
                     </div>
                 </div>
             ))}
-            <div className="pagination-wrapper"> {/* Новый контейнер для пагинации */}
+            <div className="pagination-wrapper"> {/* New container for pagination */}
                 <ReactPaginate
                     previousLabel={'<'}
                     nextLabel={'>'}
@@ -54,14 +87,12 @@ const Tasks = () => {
                     onPageChange={handlePageClick}
                     containerClassName={'pagination'}
                     activeClassName={'active'}
-                    pageClassName={'page-item'} // новый класс для элементов страниц
-                    pageLinkClassName={'page-link'} // новый класс для ссылок
+                    pageClassName={'page-item'} // new class for page items
+                    pageLinkClassName={'page-link'} // new class for links
                 />
             </div>
-
         </div>
     );
 }
 
 export default Tasks;
-

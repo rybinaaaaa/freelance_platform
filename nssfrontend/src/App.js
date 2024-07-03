@@ -40,7 +40,9 @@ const App = () => {
                 } />
                 <Route path="/task-form" element={<TaskForm />} />
 
-                <Route path="/TaskDescription" element={<TaskDescription />} />
+                <Route path="/TaskDescription/:id" element={<TaskDescription />} />
+
+
             </Routes>
             <Footer />
         </Router>
