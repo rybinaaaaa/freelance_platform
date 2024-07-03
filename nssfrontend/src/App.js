@@ -9,6 +9,8 @@ import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
 import ProfilePage from './ProfilePage'; // Импорт компонента профиля
 import TaskForm from './TaskForm';
+import TaskDescription from './TaskDescription';
+import { useEffect } from 'react';
 
 
 const App = () => {
@@ -37,6 +39,8 @@ const App = () => {
                     />
                 } />
                 <Route path="/task-form" element={<TaskForm />} />
+
+                <Route path="/TaskDescription" element={<TaskDescription />} />
             </Routes>
             <Footer />
         </Router>
@@ -44,3 +48,4 @@ const App = () => {
 };
 
 export default App;
+
