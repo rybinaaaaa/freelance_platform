@@ -207,7 +207,8 @@ public class TaskController {
     @PostMapping(value = "/posted/{id}/proposals/{proposalId}")
     public ResponseEntity<Void> assignFreelancer(@PathVariable Integer id, @PathVariable Integer proposalId, Authentication auth){
         final Task task = taskService.getById(id);
-        if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (!hasAccess(task, auth))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         final User freelancer = userService.findFreelancerByProposalId(proposalId);
         taskService.assignFreelancer(task, freelancer);
         return ResponseEntity.noContent().build();

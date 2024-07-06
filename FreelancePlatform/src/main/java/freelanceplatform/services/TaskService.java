@@ -284,7 +284,6 @@ public class TaskService {
      *
      * @param task Task object to remove the freelancer from.
      */
-    //todo мейби добавить ограничения
     @Transactional
     @CachePut(key = "#task.id")
     public void removeFreelancer(Task task){
@@ -311,8 +310,8 @@ public class TaskService {
     public void attachSolution(Task task, Solution solution){
         Objects.requireNonNull(task);
         Objects.requireNonNull(solution);
-        solution.setTask(task);
         task.setSolution(solution);
+        solution.setTask(task);
         taskRepo.save(task);
         solutionRepo.save(solution);
     }

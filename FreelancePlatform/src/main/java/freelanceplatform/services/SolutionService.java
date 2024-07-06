@@ -36,11 +36,12 @@ public class SolutionService {
      */
     @CachePut(key = "#solution.id")
     @Transactional
-    public void save(Solution solution){
+    public Solution save(Solution solution){
         Objects.requireNonNull(solution);
         Task task = solution.getTask();
         Objects.requireNonNull(task);
         solutionRepo.save(solution);
+        return solution;
     }
 
 
@@ -95,10 +96,11 @@ public class SolutionService {
      */
     @Transactional
     @CachePut(key = "#solution.id")
-    public void update(Solution solution){
+    public Solution update(Solution solution){
         Objects.requireNonNull(solution);
         if (exists(solution.getId())){
             solutionRepo.save(solution);
+            return solution;
         } else {
             throw new NotFoundException("Solution to update identified by " + solution.getId() + " not found.");
         }
@@ -115,8 +117,13 @@ public class SolutionService {
     public void delete(Solution solution){
         Objects.requireNonNull(solution);
         if (exists(solution.getId())){
-            solution.getTask().setSolution(null);
-            taskRepo.save(solution.getTask());
+            Task task = solution.getTask();
+            if (task!=null){
+                task.setSolution(null);
+                taskRepo.save(task);
+            }
+//            solution.getTask().setSolution(null);
+//            taskRepo.save(solution.getTask());
             solutionRepo.delete(solution);
         } else {
             throw new NotFoundException("Solution to update identified by " + solution.getId() + " not found.");

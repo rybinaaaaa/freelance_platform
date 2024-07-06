@@ -53,7 +53,7 @@ public class SolutionControllerTests extends IntegrationTestBase {
         taskService.save(task);
     }
     //todo resolve insertion problem
-//    @Test
+    @Test
     public void saveByUserReturnsStatusCreated() throws Exception{
         Solution solution = Generator.generateSolution();
         solution.setTask(taskService.getById(1));
@@ -109,11 +109,12 @@ public class SolutionControllerTests extends IntegrationTestBase {
                         .content(solutionJson).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-//    @Test
+    @Test
     public void updateByUserReturnsStatusNoContent() throws Exception{
         Solution solution = solutionService.getById(1);
         solution.setTask(task);
         task.setSolution(solution);
+        task.setFreelancer(emptyUser);
         taskService.save(task);
         solutionService.save(solution);
         solution.setDescription("new description");
@@ -167,8 +168,12 @@ public class SolutionControllerTests extends IntegrationTestBase {
                 .andExpect(status().isForbidden());
     }
 //    @Test
+    //todo resolve problem
     public void deleteByUserReturnsStatusNoContent() throws Exception{
         Solution solution = solutionService.getById(1);
+        task.setFreelancer(emptyUser);
+        task.setCustomer(userAdmin);
+        taskService.save(task);
         solution.setTask(task);
         solutionService.save(solution);
         mockMvc.perform(delete("/rest/solutions/1")
