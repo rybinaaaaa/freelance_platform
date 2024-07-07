@@ -254,8 +254,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/taken/{id}/attach-solution")
     public ResponseEntity<Void> attachSolution(@PathVariable Integer id, @RequestBody Solution solution){
-        final Task task = taskService.getById(id);
-        taskService.attachSolution(task, solution);
+//        final Task task = taskService.getById(id);
+        taskService.attachSolution(id, solution);
         return ResponseEntity.noContent().build();
     }
 

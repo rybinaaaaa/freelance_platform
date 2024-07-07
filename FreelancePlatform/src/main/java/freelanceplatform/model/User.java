@@ -42,7 +42,7 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @JsonIgnore
     private List<Task> postedTasks = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class User extends AbstractEntity {
     @JsonIgnore
     private List<Feedback> sentFeedbacks = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "freelancer", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "freelancer")
     @JsonIgnore
     private List<Task> takenTasks = new ArrayList<>();
 

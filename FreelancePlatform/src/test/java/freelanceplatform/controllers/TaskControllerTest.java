@@ -323,7 +323,7 @@ public class TaskControllerTest extends IntegrationTestBase {
                 .andExpect(status().isForbidden());
     }
 
-//    @Test
+    @Test
     //todo
     public void assignFreelancerByUserReturnsStatusNoContent() throws Exception {
         Task task = taskService.getById(1);

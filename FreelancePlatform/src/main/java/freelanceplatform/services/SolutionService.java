@@ -5,11 +5,9 @@ import freelanceplatform.data.TaskRepository;
 import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Solution;
 import freelanceplatform.model.Task;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@CacheConfig(cacheNames={"solutions"})
+@CacheConfig(cacheNames = {"solutions"})
 public class SolutionService {
 
     private final SolutionRepository solutionRepo;
@@ -36,10 +34,14 @@ public class SolutionService {
      */
     @CachePut(key = "#solution.id")
     @Transactional
-    public Solution save(Solution solution){
+    public Solution save(Solution solution) {
         Objects.requireNonNull(solution);
+
         Task task = solution.getTask();
         Objects.requireNonNull(task);
+
+        solution.setTask(taskRepo.findById(task.getId()).orElse(null));
+
         solutionRepo.save(solution);
         return solution;
     }
@@ -54,7 +56,7 @@ public class SolutionService {
      */
     @Transactional(readOnly = true)
     @Cacheable
-    public Solution getById(Integer id){
+    public Solution getById(Integer id) {
         Objects.requireNonNull(id);
         Optional<Solution> solution = solutionRepo.findById(id);
         if (solution.isEmpty()) throw new NotFoundException("Solution identified by " + id + " not found.");
@@ -70,10 +72,11 @@ public class SolutionService {
      */
     @Transactional(readOnly = true)
     @Cacheable
-    public Solution getByTask(Task task){
+    public Solution getByTask(Task task) {
         Objects.requireNonNull(task);
         Optional<Solution> solution = solutionRepo.findByTask(task);
-        if (solution.isEmpty()) throw new NotFoundException("Solution identified by task" + task.getId() + " not found.");
+        if (solution.isEmpty())
+            throw new NotFoundException("Solution identified by task" + task.getId() + " not found.");
         return solution.get();
     }
 
@@ -83,7 +86,7 @@ public class SolutionService {
      * @param id ID of the solution to check.
      * @return true if a solution with the specified ID exists; false otherwise.
      */
-    public boolean exists(Integer id){
+    public boolean exists(Integer id) {
         Objects.requireNonNull(id);
         return solutionRepo.existsById(id);
     }
@@ -96,9 +99,9 @@ public class SolutionService {
      */
     @Transactional
     @CachePut(key = "#solution.id")
-    public Solution update(Solution solution){
+    public Solution update(Solution solution) {
         Objects.requireNonNull(solution);
-        if (exists(solution.getId())){
+        if (exists(solution.getId())) {
             solutionRepo.save(solution);
             return solution;
         } else {
@@ -113,17 +116,18 @@ public class SolutionService {
      * @throws NotFoundException if the solution to delete is not found.
      */
     @Transactional
-    @CacheEvict(key = "#solution.id")
-    public void delete(Solution solution){
+    @Caching(evict = {
+            @CacheEvict(key = "#solution.id"),
+            @CacheEvict(value = "tasks", condition = "#solution.task != null", key = "#solution.task.id")
+    })
+    public void delete(Solution solution) {
         Objects.requireNonNull(solution);
-        if (exists(solution.getId())){
-            Task task = solution.getTask();
-            if (task!=null){
-                task.setSolution(null);
-                taskRepo.save(task);
-            }
-//            solution.getTask().setSolution(null);
-//            taskRepo.save(solution.getTask());
+
+        if (exists(solution.getId())) {
+
+            Optional.ofNullable(solution.getTask())
+                    .ifPresent(task -> task.setSolution(null));
+
             solutionRepo.delete(solution);
         } else {
             throw new NotFoundException("Solution to update identified by " + solution.getId() + " not found.");
