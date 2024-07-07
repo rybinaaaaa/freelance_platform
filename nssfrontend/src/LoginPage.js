@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import './Auth2.css';
 
@@ -8,10 +8,18 @@ const LoginPage = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault();
+
+        const token = btoa(`${username}:${password}`);
+
         try {
-            const response = await axios.post('http://localhost:8080/login', {
-                username,
-                password
+            const response = await axios.post('http://localhost:8080/login?', {}, {
+                headers: {
+                    'Authorization': `Basic ${token}`
+                },
+                params: {
+                    username,
+                    password,
+                },
             });
             console.log('Login successful:', response.data);
         } catch (error) {
@@ -31,11 +39,11 @@ const LoginPage = () => {
                 <form onSubmit={handleLogin}>
                     <div className="input-group">
                         <input type="text" id="login" placeholder="Login" required
-                               value={username} onChange={e => setUsername(e.target.value)} />
+                               value={username} onChange={e => setUsername(e.target.value)}/>
                     </div>
                     <div className="input-group">
                         <input type="password" id="password" placeholder="Password" required
-                               value={password} onChange={e => setPassword(e.target.value)} />
+                               value={password} onChange={e => setPassword(e.target.value)}/>
                     </div>
                     <div className="buttons">
                         <a href="#" className="forgot-password">Forgot password</a>
