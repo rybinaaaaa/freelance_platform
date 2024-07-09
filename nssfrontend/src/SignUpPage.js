@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import './Auth.css';
 import sideImage from './img/loginimage.jpeg';
 import { Link } from 'react-router-dom';
@@ -53,11 +55,34 @@ const SignUpPage = () => {
             if (response.ok) {
                 console.log('Registration successful');
                 alert('Registration successful');
+                // Automatically log in the user after successful registration
+                const token = btoa(`${formData.username}:${formData.password}`);
+                const authHeader = `Basic ${token}`;
+
+                const loginResponse = await axios.post('http://localhost:8080/login?', {}, {
+                    headers: {
+                        'Authorization': authHeader
+                    },
+                    params: {
+                        username: formData.username,
+                        password: formData.password,
+                    },
+                });
+
+                // Save user data and auth token in cookies
+                const { username, email, id } = loginResponse.data;
+                Cookies.set('username', username, { expires: 7 });
+                Cookies.set('email', email, { expires: 7 });
+                Cookies.set('id', id, { expires: 7 });
+                Cookies.set('authToken', authHeader, { expires: 7 });
+
+                console.log('Login successful:', loginResponse.data);
+                console.log('Authorization header:', loginResponse.config.headers.Authorization);
+                window.location.reload();
             } else {
                 const errorData = await response.json();
                 console.error('Registration failed:', errorData);
                 alert(`Registration failed: ${errorData.message}`);
-
             }
         } catch (error) {
             console.error('Error:', error);
@@ -93,7 +118,6 @@ const SignUpPage = () => {
                         </div>
                         <div className="input-group">
                             <label htmlFor="confirmPassword" className="label">Confirm your password</label>
-
                             <input type="password" id="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
                             <p className="login-prompt">
                                 If you have an account you can <Link to="/login">login here</Link>

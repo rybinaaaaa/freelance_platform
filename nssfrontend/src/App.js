@@ -9,7 +9,9 @@ import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
 import ProfilePage from './ProfilePage'; // Импорт компонента профиля
 import TaskForm from './TaskForm';
+import TasksList from './TasksList';
 import TaskDescription from './TaskDescription';
+import EditProfilePage from './EditProfilePage'
 import { useEffect } from 'react';
 
 
@@ -23,6 +25,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/edit-profile" element={<EditProfilePage />} />
                 <Route path="/profile" element={
                     <ProfilePage
                         username="Username"
@@ -42,6 +45,7 @@ const App = () => {
 
                 <Route path="/TaskDescription/:id" element={<TaskDescription />} />
 
+                <Route path="/tasks-list" element={<TasksList />} />
 
             </Routes>
             <Footer />
