@@ -62,23 +62,25 @@ const Tasks = () => {
 
     return (
         <div className="tasks-container">
-            {currentTasks.map((task, index) => (  // Use currentTasks here
-                <div key={index} className="task-card">
-                    <h3>{task.title}</h3>
-                    <p>Posted {new Date(task.postedDate).toLocaleDateString()}</p>
-                    <p>Budget: from {task.payment}</p>
-                    <p>
-                        {task.problem.substring(0, 30)}...
-                        <button className="see-more" onClick={() => handleSeeMoreClick(task.id)}>see more</button>
-
-                    </p>
-                    <div className="tags">
-                    {task.types.map((type, idx) => (
-                            <span key={idx} className="tag">{type}</span>
-                        ))}
+            <h2>All Tasks</h2>
+            <div className="tasks-grid">
+                {currentTasks.map((task, index) => (  // Use currentTasks here
+                    <div key={index} className="task-card">
+                        <h3>{task.title}</h3>
+                        <p>Posted {new Date(task.postedDate).toLocaleDateString()}</p>
+                        <p>Budget: from {task.payment}</p>
+                        <p>
+                            {task.problem.substring(0, 30)}...
+                            <button className="see-more" onClick={() => handleSeeMoreClick(task.id)}>see more</button>
+                        </p>
+                        <div className="tags">
+                            {task.types.map((type, idx) => (
+                                <span key={idx} className="tag">{type}</span>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
             <div className="pagination-wrapper"> {/* New container for pagination */}
                 <ReactPaginate
                     previousLabel={'<'}
