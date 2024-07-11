@@ -6,11 +6,11 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 
-const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {
+const ProfilePage = ({ rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {
     const navigate = useNavigate();
 
     const [showTasks, setShowTasks] = useState(false);
-
+    const [localUsername, setLocalUsername] = useState(Cookies.get('username') || ''); // Создаем локальное состояние для username
 
     const handleToggleTasks = () => {
         setShowTasks(!showTasks);
@@ -28,15 +28,19 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
         Cookies.remove('email');
         Cookies.remove('id');
         Cookies.remove('authToken');
-
-        // Переадресация на страницу входа
-        navigate('/login');
+        setLocalUsername(''); // Очищаем локальное состояние username
+        navigate('/login', { replace: true }); // Переадресация на страницу входа
     };
+
+    useEffect(() => {
+        // Обновление localUsername при изменении извне
+        setLocalUsername(Cookies.get('username') || '');
+    }, []);
 
     return (
         <div className="profile-container">
             <div className="profile-header">
-                <h1>{username}</h1>
+                <h1>{localUsername}</h1>
                 <div className="profile-subheader">
                     <span className="rating">Rating {rating}</span>
                     <span className="role">{role}</span>
@@ -46,10 +50,10 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
                 <button onClick={handleLogout}>Logout</button>
             </div>
             <div className="profile-body">
-            <div className="profile-details">
+                <div className="profile-details">
                     <div className="left-section">
                         <h2>Personal data</h2>
-                        <p>{username}</p>
+                        <p>{localUsername}</p>
                         <h2>Contacts</h2>
                         <p>{email}</p>
                         <p>{phone}</p>

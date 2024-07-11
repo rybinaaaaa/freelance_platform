@@ -16,8 +16,9 @@ const Header = () => {
             setUsername(savedUsername);
         } else {
             console.log('No username found in cookies');
+            //navigate('/login', { replace: true });
         }
-    }, []);
+    }, );
 
     const handleProfileClick = () => {
         navigate('/profile'); // Путь к странице профиля
