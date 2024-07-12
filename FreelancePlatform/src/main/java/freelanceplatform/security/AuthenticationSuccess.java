@@ -34,10 +34,12 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
         final String username = getUsername(authentication);
+        final Integer userId = getUserId(authentication);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Successfully authenticated user {}", username);
         }
-        final LoginStatus loginStatus = new LoginStatus(true, authentication.isAuthenticated(), username, null);
+        System.out.println("USER_ID: " + userId);
+        final LoginStatus loginStatus = new LoginStatus(true, authentication.isAuthenticated(), userId, username, null);
         mapper.writeValue(httpServletResponse.getOutputStream(), loginStatus);
     }
 
@@ -55,6 +57,18 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     }
 
     /**
+     * Retrieves user id from authentication principal.
+     * @param authentication The authentication object containing the principal.
+     * @return The user id of the authenticated user, or null if authentication is null.
+     */
+    private Integer getUserId(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
+        return ((UserDetails) authentication.getPrincipal()).getUser().getId();
+    }
+
+    /**
      * Handles successful logout.
      *
      * @param httpServletRequest  The request being handled.
@@ -68,7 +82,7 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
         if (LOG.isTraceEnabled()) {
             LOG.trace("Successfully logged out user {}", getUsername(authentication));
         }
-        final LoginStatus loginStatus = new LoginStatus(false, true, null, null);
+        final LoginStatus loginStatus = new LoginStatus(false, true, null, null, null);
         mapper.writeValue(httpServletResponse.getOutputStream(), loginStatus);
     }
 }

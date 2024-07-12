@@ -33,7 +33,7 @@ public class AuthenticationFailure implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         LOG.debug("Login failed for user {}.", request.getParameter("username"));
-        final LoginStatus status = new LoginStatus(false, false, null, exception.getMessage());
+        final LoginStatus status = new LoginStatus(false, false, null, null, exception.getMessage());
         mapper.writeValue(response.getOutputStream(), status);
     }
 }
