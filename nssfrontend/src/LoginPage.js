@@ -25,10 +25,7 @@ const LoginPage = () => {
             });
 
             // Сохраняем данные пользователя и авторизационный токен в куки
-            const { name, email } = response.data;
             Cookies.set('username', response.data.username, { expires: 7 }); // Куки будут действительны 7 дней
-            Cookies.set('email', response.data.email, { expires: 7 });
-            Cookies.set('id', response.data.id, { expires: 7 });
             Cookies.set('authToken', authHeader, { expires: 7 });
 
             console.log('Login successful:', response.data);

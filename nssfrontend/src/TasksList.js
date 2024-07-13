@@ -16,7 +16,7 @@ const TasksList = () => {
     const [taskIdToEdit, setTaskIdToEdit] = useState(null);
 
     const navigate = useNavigate();
-    const { authToken } = useAuth(); // Получение токена из контекста аутентификации
+    const authToken = Cookies.get('authToken'); // Получение токена из контекста аутентификации
     const tasksPerPage = 4;
 
     useEffect(() => {
@@ -101,12 +101,12 @@ const TasksList = () => {
         }
     };
 
-    const handleDeleteClick = async (taskId) => {
-        const authToken = Cookies.get('authToken'); // Получаем токен из Cookies
+    const handleDeleteClick = async (taskId) => {// Получаем токен из Cookies
 
         try {
             const response = await axios.delete(`http://localhost:8080/rest/tasks/posted/${taskId}`, {
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': authToken
                 }
             });

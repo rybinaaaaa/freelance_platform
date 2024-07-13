@@ -2,116 +2,110 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const UserProfile = () => {
-    const [user, setUser] = useState(null);
-    const [formData, setFormData] = useState({
-        id: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-    });
+const EditProfilePage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const savedUsername = Cookies.get('username');
+    fetchUserIdByUsername(savedUsername);
+  }, []);
+
+  const fetchUserIdByUsername = async (username) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/rest/users/username/${username}`);
+      setUserId(response.data.id);
+      setLoading(false);
+      fetchUserData(response.data.id);
+    } catch (error) {
+      console.error('Error fetching user id:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/rest/users/${userId}`);
+      const { firstName, lastName, email } = response.data;
+      setFirstName(firstName);
+      setLastName(lastName);
+      setEmail(email);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = {
+      id: userId,
+      firstName,
+      lastName,
+      email
+    };
+
     const authToken = Cookies.get('authToken');
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/rest/users/current', {
-                    headers: {
-                        'Authorization': authToken
-                    }
-                });
-                setUser(response.data);
-                setFormData({
-                    id: response.data.id,
-                    firstName: response.data.firstName,
-                    lastName: response.data.lastName,
-                    email: response.data.email
-                });
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            }
-        };
-
-        fetchUser();
-    }, [authToken]);
-
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email
-            });
+    try {
+      const response = await axios.put(`http://localhost:8080/rest/users/${userId}`, formData, {
+        headers: {
+          'Authorization': authToken
         }
-    }, [user]);
+      });
+      console.log('User updated successfully:', response.data);
+      // Добавьте здесь логику для обновления пользовательского интерфейса, например, отображение сообщения об успешном обновлении
+    } catch (error) {
+      console.error('Error updating user:', error);
+      // Обработка ошибок, например, вывод ошибки на экран или перенаправление пользователя
+    }
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.put(`http://localhost:8080/rest/users/${formData.id}`, formData, {
-                headers: {
-                    'Authorization': authToken,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.status === 200) {
-                // Обновляем данные пользователя после успешного обновления
-                setUser(response.data);
-                // Обновляем форму после успешного обновления профиля
-                setFormData({
-                    id: response.data.id,
-                    firstName: response.data.firstName,
-                    lastName: response.data.lastName,
-                    email: response.data.email
-                });
-                console.log('Profile updated successfully');
-            } else {
-                console.error('Failed to update user:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error updating user:', error);
-        }
-    };
-
-    return (
-        <div>
-            {user ? (
-                <div>
-                    <h2>User Profile</h2>
-                    <p>Username: {user.username}</p>
-                    <form onSubmit={handleSubmit}>
-                        <label>
-                            First Name:
-                            <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} />
-                        </label>
-                        <br />
-                        <label>
-                            Last Name:
-                            <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} />
-                        </label>
-                        <br />
-                        <label>
-                            Email:
-                            <input type="email" name="email" value={formData.email} onChange={handleInputChange} />
-                        </label>
-                        <br />
-                        <button type="submit">Save</button>
-                    </form>
-                </div>
-            ) : (
-                <p>Loading user profile...</p>
-            )}
+  return (
+    <div className="container">
+      <h2>Edit Profile</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label htmlFor="firstName">First Name:</label>
+          <input
+            type="text"
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div className="input-group">
+          <label htmlFor="lastName">Last Name:</label>
+          <input
+            type="text"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  );
 };
 
-export default UserProfile;
+export default EditProfilePage;

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import './EditTaskModal.css'; // Убедитесь, что стили подключены
-
+import './EditTaskModal.css'; 
 const EditTaskModal = ({ taskId, onClose, onTaskUpdated }) => {
     const [title, setTitle] = useState('');
     const [problem, setProblem] = useState('');
@@ -20,7 +19,7 @@ const EditTaskModal = ({ taskId, onClose, onTaskUpdated }) => {
             type: selectedType
         };
 
-        console.log('Updated Task:', updatedTask); // Добавьте это для проверки
+        console.log('Updated Task:', updatedTask); 
 
         const authToken = Cookies.get('authToken');
 
