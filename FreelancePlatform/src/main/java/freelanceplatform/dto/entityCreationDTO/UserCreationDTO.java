@@ -14,10 +14,5 @@ public class UserCreationDTO {
     private  String lastName;
     private  String email;
     private  String password;
-//    private  Role role;
-//
-//    @JsonIgnore
-//    public boolean isAdmin() {
-//        return role == Role.ADMIN;
-//    }
+
 }

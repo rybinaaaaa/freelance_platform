@@ -150,7 +150,6 @@ public class Mapper {
                 taskDTO.getDeadline(),
                 taskDTO.getPayment(),
                 taskDTO.getType());
-//        task.setId(taskDTO.getId());
         task.setStatus(taskDTO.getTaskStatus());
         return task;
     }

@@ -29,7 +29,7 @@ public class Generator {
         user.setUsername("username" + randomInt());
         user.setFirstName("firstname" + randomInt());
         user.setLastName("lastname" + randomInt());
-        user.setEmail("email" + randomInt());
+        user.setEmail("email@" + randomInt() + ".com");
         user.setPassword("password " + randomInt());
         return user;
     }
