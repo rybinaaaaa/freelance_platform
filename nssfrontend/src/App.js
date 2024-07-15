@@ -9,7 +9,8 @@ import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
 import ProfilePage from './ProfilePage'; // Импорт компонента профиля
 import ProposalsList from './ProposalsList';
-
+import SentProposals from './SentProposals'; // Убедитесь, что импортируете эти компоненты
+import ReceivedProposals from './ReceivedProposals';
 import TaskForm from './TaskForm';
 import TasksList from './TasksList';
 import TaskDescription from './TaskDescription';
