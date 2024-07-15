@@ -3,12 +3,14 @@ import './Profile.css';
 import { useNavigate } from 'react-router-dom';
 import TasksList from './TasksList';
 import ProposalsList from './ProposalsList';
+import PickedOrders from './PickedOrders'; // Подразумевается, что этот компонент создан
 import Cookies from 'js-cookie';
 
 const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {
     const navigate = useNavigate();
     const [showTasks, setShowTasks] = useState(false);
     const [showProposals, setShowProposals] = useState(false);
+    const [showPickedOrders, setShowPickedOrders] = useState(false);
 
     const handleToggleTasks = () => {
         setShowTasks(!showTasks);
@@ -16,6 +18,10 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
 
     const handleToggleProposals = () => {
         setShowProposals(!showProposals);
+    };
+
+    const handleTogglePickedOrders = () => {
+        setShowPickedOrders(!showPickedOrders);
     };
 
     const handleAddTask = () => {
@@ -60,11 +66,12 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
                 </div>
                 <div className="profile-tasks">
                     <button onClick={handleToggleTasks}>Created Tasks</button>
-                    <button>Picked Orders</button>
+                    <button onClick={handleTogglePickedOrders}>Picked Orders</button>
                     <button onClick={handleToggleProposals}>Proposals</button>
                     <button onClick={handleAddTask}>Add task</button>
                 </div>
                 {showTasks && <TasksList />}
+                {showPickedOrders && <PickedOrders />}
                 {showProposals && <ProposalsList />}
             </div>
         </div>
@@ -72,6 +79,3 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
 };
 
 export default ProfilePage;
-
-
-
