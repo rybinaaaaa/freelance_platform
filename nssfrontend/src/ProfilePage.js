@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
 import TasksList from './TasksList';
+import ProposalsList from './ProposalsList';
 import Cookies from 'js-cookie';
-import axios from 'axios';
-import ReactPaginate from 'react-paginate';
 
 const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {
     const navigate = useNavigate();
-
     const [showTasks, setShowTasks] = useState(false);
-
+    const [showProposals, setShowProposals] = useState(false);
 
     const handleToggleTasks = () => {
         setShowTasks(!showTasks);
     };
+
+    const handleToggleProposals = () => {
+        setShowProposals(!showProposals);
+    };
+
     const handleAddTask = () => {
         navigate('/task-form');
     };
@@ -22,14 +25,12 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
     const handleEditProfile = () => {
         navigate('/edit-profile');
     };
+
     const handleLogout = () => {
-        // Очистка кук
         Cookies.remove('username');
         Cookies.remove('email');
         Cookies.remove('id');
         Cookies.remove('authToken');
-
-        // Переадресация на страницу входа
         navigate('/login', { replace: true });
     };
 
@@ -46,18 +47,12 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
                 <button onClick={handleLogout}>Logout</button>
             </div>
             <div className="profile-body">
-            <div className="profile-details">
-                    <div className="left-section">
-                        <h2>Personal data</h2>
-                        <p>{username}</p>
-                        <h2>Contacts</h2>
-                        <p>{email}</p>
-                        <p>{phone}</p>
-                    </div>
-                    <div className="right-section">
-                        <h2>Resume</h2>
-                        <a href={resumeLink}>Download</a>
-                    </div>
+                <div className="profile-details">
+                    <h2>Personal data</h2>
+                    <p>{username}</p>
+                    <h2>Contacts</h2>
+                    <p>{email}</p>
+                    <p>{phone}</p>
                 </div>
                 <div className="profile-about">
                     <h2>About me</h2>
@@ -66,13 +61,17 @@ const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email
                 <div className="profile-tasks">
                     <button onClick={handleToggleTasks}>Created Tasks</button>
                     <button>Picked Orders</button>
-                    <button>Proposals</button>
+                    <button onClick={handleToggleProposals}>Proposals</button>
                     <button onClick={handleAddTask}>Add task</button>
                 </div>
+                {showTasks && <TasksList />}
+                {showProposals && <ProposalsList />}
             </div>
-            {showTasks && <TasksList />}
         </div>
     );
 };
 
 export default ProfilePage;
+
+
+

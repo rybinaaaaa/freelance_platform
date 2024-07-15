@@ -1,0 +1,12 @@
+.proposals-container .proposal-filter-buttons button {
+    padding: 10px 20px;
+    margin-right: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.proposals-container .proposal-filter-buttons button.active {
+    background-color: #367c39;
+}

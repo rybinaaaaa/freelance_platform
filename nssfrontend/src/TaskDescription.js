@@ -9,19 +9,33 @@ const TaskDescription = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
+    const [proposals, setProposals] = useState([]);
 
-    const currentUserUsername = Cookies.get('username'); // Предполагаем, что имя пользователя хранится в cookies
+    const currentUserUsername = Cookies.get('username');
+    const authToken = Cookies.get('authToken');
+    const userId = Cookies.get('userId');
 
     useEffect(() => {
-        const fetchTask = async () => {
+        const fetchTaskAndProposals = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/rest/tasks/${id}`);
-                if (!response.ok) {
+                const taskResponse = await fetch(`http://localhost:8080/rest/tasks/${id}`);
+                if (!taskResponse.ok) {
                     throw new Error('Failed to fetch the task');
                 }
-                const data = await response.json();
-                setTask(data);
-                setIsOwner(data.customerUsername === currentUserUsername);
+                const taskData = await taskResponse.json();
+                setTask(taskData);
+                setIsOwner(taskData.customerUsername === currentUserUsername);
+
+                const proposalsResponse = await fetch(`http://localhost:8080/rest/proposals`, {
+                    headers: {
+                        'Authorization': authToken
+                    }
+                });
+                if (!proposalsResponse.ok) {
+                    throw new Error('Failed to fetch proposals');
+                }
+                const proposalsData = await proposalsResponse.json();
+                setProposals(proposalsData.filter(p => p.freelancerId.toString() === userId));
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -29,48 +43,53 @@ const TaskDescription = () => {
             }
         };
 
-        fetchTask();
-    }, [id, currentUserUsername]);
+        fetchTaskAndProposals();
+    }, [id, currentUserUsername, authToken, userId]);
 
     const sendProposal = async () => {
-        const authToken = Cookies.get('authToken');
-        if (!authToken) {
-            alert('No authentication token found. Please login.');
+        if (proposals.some(p => p.taskId.toString() === id)) {
+            alert('You have already sent a proposal for this task.');
             return;
         }
 
         const proposalData = {
-            taskId: id  // Убедитесь, что id задачи корректно передается в эту функцию
+            taskId: id,
+            freelancerId: userId
         };
 
         try {
-            const response = await fetch('http://localhost:8080/rest/proposals', {
+            const response = await fetch(`http://localhost:8080/rest/proposals`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': authToken  // Токен уже должен содержать префикс 'Basic '
+                    'Authorization': authToken
                 },
                 body: JSON.stringify(proposalData)
             });
-
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error('Failed to send proposal: ' + errorText);
+                throw new Error('Failed to send proposal');
             }
 
-            const location = response.headers.get('Location');
-            console.log('Proposal created at: ', location);
+            // Попытка чтения JSON только если в ответе есть данные
+            let responseData = null;
+            if (response.headers.get("content-length") !== "0") {
+                responseData = await response.json(); // Только если есть что читать
+            }
+
             alert('Proposal sent successfully!');
+            if (responseData && responseData.id) {
+                setProposals([...proposals, { ...proposalData, id: responseData.id }]);
+            } else {
+                // Добавляем без ID, если ответ сервера не содержал данных
+                setProposals([...proposals, { ...proposalData }]);
+            }
         } catch (error) {
-            console.error('Error sending proposal:', error);
-            alert('Failed to send proposal. See console for details.');
+            // Возможно, стоит уточнить текст ошибки, чтобы он был информативнее
+            alert('Error sending proposal: ' + (error.message || "No response from server"));
         }
+
+
     };
-
-
-
-
-
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;

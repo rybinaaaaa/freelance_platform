@@ -8,6 +8,8 @@ import About from './About';
 import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
 import ProfilePage from './ProfilePage'; // Импорт компонента профиля
+import ProposalsList from './ProposalsList';
+
 import TaskForm from './TaskForm';
 import TasksList from './TasksList';
 import TaskDescription from './TaskDescription';
@@ -36,6 +38,7 @@ const App = () => {
                     <Route path="/task-form" element={<TaskForm />} />
                     <Route path="/TaskDescription/:id" element={<TaskDescription />} />
                     <Route path="/tasks-list" element={<TasksList />} />
+                    <Route path="/proposals-list" element={<PrivateRoute><ProposalsList /></PrivateRoute>} />
                 </Routes>
                 <Footer />
             </AuthProvider>
