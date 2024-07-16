@@ -11,20 +11,19 @@ const PickedOrders = () => {
         const fetchPickedTasks = async () => {
             setLoading(true);
             const authToken = Cookies.get('authToken');
-            const userId = Cookies.get('userId'); // Получаем ID пользователя из куки
 
             try {
                 const response = await axios.get(`http://localhost:8080/rest/tasks/taken`, {
                     headers: { 'Authorization': authToken },
                     params: {
-                        taskStatus: 'ASSIGNED', // Указываем статус задач
-                        expired: false, // Исключаем истекшие задачи
-                        freelancerId: userId  // Параметр не поддерживается бэкендом, указан для примера
+                        expired: false // Убедитесь, что API поддерживает этот параметр, если нет, удалите его
                     }
                 });
 
                 if (response.status === 200) {
-                    setTasks(response.data);
+                    // Фильтруем задачи по статусу ASSIGNED, если API не делает этого автоматически
+                    const assignedTasks = response.data.filter(task => task.status === 'ASSIGNED');
+                    setTasks(assignedTasks);
                 } else {
                     throw new Error('Failed to fetch picked tasks');
                 }

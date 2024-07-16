@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './Profile.css';
 import { useNavigate } from 'react-router-dom';
-import TasksList from './TasksList';
-import ProposalsList from './ProposalsList';
-import PickedOrders from './PickedOrders'; // Подразумевается, что этот компонент создан
+import TasksList from '../TaskList/TasksList';
+import ProposalsList from '../ProposalsList/ProposalsList';
+import PickedOrders from '../PickedOrders/PickedOrders'; // Подразумевается, что этот компонент создан
 import Cookies from 'js-cookie';
 
 const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {

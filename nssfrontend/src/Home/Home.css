@@ -1,5 +1,5 @@
 .home-container {
-    background: url('./img/main1.webp') no-repeat center center fixed;
+    background: url('../img/main1.webp') no-repeat center center fixed;
     background-size: cover;
     height: 600px;
     display: flex;

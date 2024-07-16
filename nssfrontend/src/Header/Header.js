@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './Header.css'; // Импорт стилей
-import logoImage from './img/LogoOneTask.png';
-import profileIcon from './img/ProfileIcon.png';
+import logoImage from '../img/LogoOneTask.png';
+import profileIcon from '../img/ProfileIcon.png';
 
 const Header = () => {
     const navigate = useNavigate();

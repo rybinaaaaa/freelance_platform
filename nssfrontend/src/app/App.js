@@ -1,21 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './Header';
-import Footer from './Footer';
-import Home from './Home';
-import Tasks from './Tasks';
-import About from './About';
-import LoginPage from './LoginPage';
-import SignUpPage from './SignUpPage';
-import ProfilePage from './ProfilePage'; // Импорт компонента профиля
-import ProposalsList from './ProposalsList';
-import SentProposals from './SentProposals'; // Убедитесь, что импортируете эти компоненты
-import ReceivedProposals from './ReceivedProposals';
-import TaskForm from './TaskForm';
-import TasksList from './TasksList';
-import TaskDescription from './TaskDescription';
-import EditProfilePage from './EditProfilePage';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import Home from '../Home/Home';
+import Tasks from '../Tasks/Tasks';
+import About from '../About/About';
+import LoginPage from '../LoginPage/LoginPage';
+import SignUpPage from '../SignUpPage/SignUpPage';
+import ProfilePage from '../Profile/ProfilePage'; // Импорт компонента профиля
+import ProposalsList from '../ProposalsList/ProposalsList';
+import SentProposals from '../SentProposals/SentProposals'; // Убедитесь, что импортируете эти компоненты
+import ReceivedProposals from '../ReceivedProposals/ReceivedProposals';
+import TaskForm from '../TaskForm/TaskForm';
+import TasksList from '../TaskList/TasksList';
+import TaskDescription from '../TaskDescription/TaskDescription';
+import EditProfilePage from '../EditProfilePage/EditProfilePage';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 // Компонент для защищенного роута
 const PrivateRoute = ({ children }) => {

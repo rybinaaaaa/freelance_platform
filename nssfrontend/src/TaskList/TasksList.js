@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
-import EditTaskModal from './EditTaskModal';
+import EditTaskModal from '../EditTaskModal/EditTaskModal';
 import './TasksList.css';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie'; // Импорт Cookies для работы с куками
 
 const TasksList = () => {

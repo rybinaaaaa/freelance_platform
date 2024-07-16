@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import './Auth.css';
-import sideImage from './img/loginimage.jpeg';
+import sideImage from '../img/loginimage.jpeg';
 import { Link } from 'react-router-dom';
 
 const SignUpPage = () => {

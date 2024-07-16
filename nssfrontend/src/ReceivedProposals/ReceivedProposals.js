@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 const ReceivedProposals = () => {
     const [proposals, setProposals] = useState([]);
-    const [selectedFreelancer, setSelectedFreelancer] = useState({});
+    const [selectedProposal, setSelectedProposal] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -55,42 +55,34 @@ const ReceivedProposals = () => {
             }
         };
 
-
         fetchReceivedProposals();
     }, []);
 
-    const handleSelectFreelancer = (taskId, freelancerId) => {
-        console.log(`Selecting freelancer ${freelancerId} for task ${taskId}`);
-        setSelectedFreelancer(prev => ({
+    const handleSelectFreelancer = (taskId, proposalId) => {
+        setSelectedProposal(prev => ({
             ...prev,
-            [taskId]: freelancerId  // Update selection state
+            [taskId]: proposalId
         }));
     };
 
-
     const handleConfirmSelection = async (taskId) => {
         const authToken = Cookies.get('authToken');
-        const freelancerId = selectedFreelancer[taskId];
+        const proposalId = selectedProposal[taskId];
 
-        // Логирование для отладки перед отправкой запроса
-        console.log(`Attempting to assign freelancer ${freelancerId} to task ${taskId}`);
-
-        if (!freelancerId) {
-            alert("Please select a freelancer before confirming.");
+        if (!proposalId) {
+            alert("Please select a proposal before confirming.");
             return;
         }
 
         try {
-            const response = await axios.post(`http://localhost:8080/rest/tasks/posted/${taskId}/proposals/${freelancerId}`, {}, {
+            const response = await axios.post(`http://localhost:8080/rest/tasks/posted/${taskId}/proposals/${proposalId}`, {}, {
                 headers: {
                     'Authorization': authToken
                 }
             });
 
             if (response.status === 204) {
-                alert(`Freelancer ID ${freelancerId} successfully assigned to task ID ${taskId}.`);
-                // Можно здесь добавить дополнительное логирование для подтверждения успешного запроса
-                console.log(`Freelancer ID ${freelancerId} was successfully assigned to task ID ${taskId}`);
+                alert(`Proposal ID ${proposalId} successfully assigned to task ID ${taskId}.`);
             } else {
                 throw new Error('Failed to assign freelancer');
             }
@@ -99,9 +91,6 @@ const ReceivedProposals = () => {
             alert(`Error assigning freelancer: ${error.message}`);
         }
     };
-
-
-
 
     return (
         <div>
@@ -113,8 +102,8 @@ const ReceivedProposals = () => {
                             <label>
                                 <input
                                     type="checkbox"
-                                    checked={selectedFreelancer[taskId] === proposal.freelancerId}
-                                    onChange={() => handleSelectFreelancer(taskId, proposal.freelancerId)}
+                                    checked={selectedProposal[taskId] === proposal.id}
+                                    onChange={() => handleSelectFreelancer(taskId, proposal.id)}
                                 />
                                 Freelancer: {proposal.freelancerUsername}
                             </label>
@@ -125,7 +114,6 @@ const ReceivedProposals = () => {
             ))}
         </div>
     );
-
 };
 
 export default ReceivedProposals;

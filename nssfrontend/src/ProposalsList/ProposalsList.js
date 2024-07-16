@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import SentProposals from './SentProposals';
-import ReceivedProposals from './ReceivedProposals';
+import SentProposals from '../SentProposals/SentProposals';
+import ReceivedProposals from '../ReceivedProposals/ReceivedProposals';
 import './ProposalsList.css';
 
 const ProposalsList = () => {
