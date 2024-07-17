@@ -31,10 +31,20 @@ public class RestExceptionHandler {
         return objectMapper;
     }
 
+    /**
+     * Creates a default HTTP message converter using Jackson for JSON conversion.
+     *
+     * @return a {@link MappingJackson2HttpMessageConverter} instance
+     */
     public static HttpMessageConverter<?> createDefaultMessageConverter() {
         return new MappingJackson2HttpMessageConverter(getObjectMapper());
     }
 
+    /**
+     * Creates an HTTP message converter for encoding strings with UTF-8.
+     *
+     * @return a {@link StringHttpMessageConverter} instance with UTF-8 encoding
+     */
     public static HttpMessageConverter<?> createStringEncodingMessageConverter() {
         return new StringHttpMessageConverter(StandardCharsets.UTF_8);
     }
@@ -53,6 +63,9 @@ public class RestExceptionHandler {
         return context;
     }
 
+    /**
+     * Clears the current security context.
+     */
     public static void clearSecurityContext() {
         SecurityContextHolder.clearContext();
     }

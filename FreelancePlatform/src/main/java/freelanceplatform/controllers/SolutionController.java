@@ -103,6 +103,16 @@ public class SolutionController {
         }
     }
 
+    /**
+     * Checks if the authenticated user has access to the given solution.
+     *
+     * <p>This method verifies if the user associated with the given authentication
+     * details is the same as the freelancer assigned to the task related to the provided solution.
+     *
+     * @param solution the solution for which access is being checked
+     * @param auth the authentication object containing the user details
+     * @return true if the authenticated user is the freelancer assigned to the task, false otherwise
+     */
     private boolean hasAccess(Solution solution, Authentication auth) {
         final User user = ((UserDetails) auth.getPrincipal()).getUser();
         return solution.getTask().getFreelancer().getId().equals(user.getId());

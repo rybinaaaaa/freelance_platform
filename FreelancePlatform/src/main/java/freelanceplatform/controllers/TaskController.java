@@ -272,6 +272,16 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Checks if the authenticated user has access to the given task.
+     *
+     * <p>This method verifies if the user associated with the given authentication
+     * details is the same as the customer assigned to the provided task.
+     *
+     * @param task the task for which access is being checked
+     * @param auth the authentication object containing the user details
+     * @return true if the authenticated user is the customer assigned to the task, false otherwise
+     */
     private boolean hasAccess(Task task, Authentication auth) {
         final User user = ((UserDetails) auth.getPrincipal()).getUser();
         return task.getCustomer().getId().equals(user.getId());

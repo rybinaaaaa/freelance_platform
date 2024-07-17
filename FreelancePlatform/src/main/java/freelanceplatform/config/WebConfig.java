@@ -24,6 +24,14 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loggerInterceptor).addPathPatterns("/**");
     }
 
+    /**
+     * Configures CORS mappings.
+     *
+     * <p>This method sets up CORS mappings to allow requests from specified origins,
+     * with allowed methods, headers, and other settings.
+     *
+     * @param registry the {@link CorsRegistry} to which the CORS configuration is added
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
