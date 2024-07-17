@@ -30,7 +30,7 @@
 }
 
 .form-container textarea {
-    height: 150px; /* Увеличение высоты текстового поля */
+    height: 150px; 
 }
 
 .form-container button {
@@ -65,17 +65,17 @@
 }
 
 .checkbox-group {
-    display: none; /* По умолчанию скрыто */
+    display: none; 
     background: white;
     border: 1px solid #ccc;
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
-    box-sizing: border-box; /* Учитывать padding и border в ширине и высоте */
+    box-sizing: border-box; 
     padding: 10px 0;
 }
 .checkbox-group.show {
-    display: block; /* Показывать при активации */
+    display: block; 
 }
 .checkbox-label {
     display: block;
@@ -90,13 +90,13 @@
 
 .form-container button {
     align-self: center;
-    margin-top: 20px; /* Убедитесь, что кнопка не прилипает к последнему элементу */
+    margin-top: 20px; 
 }
 .form-container form {
     display: flex;
     flex-direction: column;
-    height: auto; /* Автоматически адаптирует высоту */
-    overflow: visible; /* Убедитесь, что содержимое не обрезается */
+    height: auto; 
+    overflow: visible; 
 }
 
 

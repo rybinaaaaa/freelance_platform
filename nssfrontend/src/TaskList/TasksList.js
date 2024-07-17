@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import EditTaskModal from '../EditTaskModal/EditTaskModal';
 import './TasksList.css';
 import { useAuth } from '../contexts/AuthContext';
-import Cookies from 'js-cookie'; // Импорт Cookies для работы с куками
+import Cookies from 'js-cookie'; 
 
 const TasksList = () => {
     const [tasks, setTasks] = useState([]);
@@ -16,7 +16,7 @@ const TasksList = () => {
     const [taskIdToEdit, setTaskIdToEdit] = useState(null);
 
     const navigate = useNavigate();
-    const authToken = Cookies.get('authToken'); // Получение токена из контекста аутентификации
+    const authToken = Cookies.get('authToken'); 
     const tasksPerPage = 4;
 
     useEffect(() => {
@@ -33,7 +33,7 @@ const TasksList = () => {
     const fetchTasks = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/rest/tasks/posted', {
+            const response = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted', {
                 headers: {
                     'Authorization': authToken
                 },
@@ -76,7 +76,7 @@ const TasksList = () => {
     const handleTaskUpdated = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/rest/tasks/posted', {
+            const response = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted', {
                 headers: {
                     'Authorization': authToken
                 },
@@ -101,10 +101,10 @@ const TasksList = () => {
         }
     };
 
-    const handleDeleteClick = async (taskId) => {// Получаем токен из Cookies
+    const handleDeleteClick = async (taskId) => {
 
         try {
-            const response = await axios.delete(`http://localhost:8080/rest/tasks/posted/${taskId}`, {
+            const response = await axios.delete(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted/${taskId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': authToken
@@ -113,7 +113,7 @@ const TasksList = () => {
 
             if (response.status === 204) {
                 alert('Task deleted successfully!');
-                fetchTasks(); // Обновляем список задач после удаления
+                fetchTasks(); 
             } else {
                 alert('Failed to delete task');
             }

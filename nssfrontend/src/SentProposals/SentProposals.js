@@ -11,19 +11,19 @@ const SentProposals = () => {
             setLoading(true);
             const authToken = Cookies.get('authToken');
             try {
-                const response = await axios.get('http://localhost:8080/rest/proposals', {
+                const response = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/proposals', {
                     headers: { 'Authorization': authToken }
                 });
                 const userId = Cookies.get('userId');
                 const filteredProposals = response.data.filter(p => p.freelancerId.toString() === userId);
 
-                // Для каждого предложения загрузим данные задачи
+            
                 const proposalsWithTaskTitles = await Promise.all(filteredProposals.map(async (proposal) => {
-                    const taskResponse = await axios.get(`http://localhost:8080/rest/tasks/${proposal.taskId}`, {
+                    const taskResponse = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/${proposal.taskId}`, {
                         headers: { 'Authorization': authToken }
                     });
                     const taskData = await taskResponse.data;
-                    return { ...proposal, taskTitle: taskData.title }; // Добавляем название задачи к каждому предложению
+                    return { ...proposal, taskTitle: taskData.title }; 
                 }));
 
                 setProposals(proposalsWithTaskTitles);

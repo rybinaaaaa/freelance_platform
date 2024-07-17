@@ -14,7 +14,7 @@ const LoginPage = () => {
         const authHeader = `Basic ${token}`;
 
         try {
-            const response = await axios.post('http://localhost:8080/login?', {}, {
+            const response = await axios.post('https://freelance-platform-3-0-2.onrender.com/login?', {}, {
                 headers: {
                     'Authorization': authHeader
                 },
@@ -24,9 +24,9 @@ const LoginPage = () => {
                 },
             });
 
-            // Сохраняем данные пользователя и авторизационный токен в куки
-            Cookies.set('username', response.data.username, { expires: 7 }); // Куки будут действительны 7 дней
-            Cookies.set('userId', response.data.userId, { expires: 7 }); // Сохранение userID в куки
+          
+            Cookies.set('username', response.data.username, { expires: 7 }); 
+            Cookies.set('userId', response.data.userId, { expires: 7 }); 
             Cookies.set('authToken', authHeader, { expires: 7 });
 
             console.log('Login successful:', response.data);

@@ -4,7 +4,7 @@ import ReceivedProposals from '../ReceivedProposals/ReceivedProposals';
 import './ProposalsList.css';
 
 const ProposalsList = () => {
-    const [viewType, setViewType] = useState('sent'); // 'sent' или 'received'
+    const [viewType, setViewType] = useState('sent'); 
 
     return (
         <div className="proposals-container">

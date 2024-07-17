@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import './Header.css'; // Импорт стилей
+import './Header.css';
 import logoImage from '../img/LogoOneTask.png';
 import profileIcon from '../img/ProfileIcon.png';
 
@@ -10,7 +10,7 @@ const Header = () => {
     const [username, setUsername] = useState('');
 
     useEffect(() => {
-        // Получаем имя пользователя из куки
+        
        const savedUsername = Cookies.get('username');
         if (savedUsername) {
             setUsername(savedUsername);
@@ -21,7 +21,7 @@ const Header = () => {
     }, );
 
     const handleProfileClick = () => {
-        navigate('/profile'); // Путь к странице профиля
+        navigate('/profile'); 
     };
 
     return (

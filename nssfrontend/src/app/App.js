@@ -7,9 +7,9 @@ import Tasks from '../Tasks/Tasks';
 import About from '../About/About';
 import LoginPage from '../LoginPage/LoginPage';
 import SignUpPage from '../SignUpPage/SignUpPage';
-import ProfilePage from '../Profile/ProfilePage'; // Импорт компонента профиля
+import ProfilePage from '../Profile/ProfilePage'; 
 import ProposalsList from '../ProposalsList/ProposalsList';
-import SentProposals from '../SentProposals/SentProposals'; // Убедитесь, что импортируете эти компоненты
+import SentProposals from '../SentProposals/SentProposals'; 
 import ReceivedProposals from '../ReceivedProposals/ReceivedProposals';
 import TaskForm from '../TaskForm/TaskForm';
 import TasksList from '../TaskList/TasksList';
@@ -17,7 +17,7 @@ import TaskDescription from '../TaskDescription/TaskDescription';
 import EditProfilePage from '../EditProfilePage/EditProfilePage';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
-// Компонент для защищенного роута
+
 const PrivateRoute = ({ children }) => {
     const { authToken } = useAuth();
     return authToken ? children : <Navigate to="/login" replace />;
@@ -26,7 +26,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <Router>
-            <AuthProvider> {/* Перемещение AuthProvider на более высокий уровень */}
+            <AuthProvider> {}
                 <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />

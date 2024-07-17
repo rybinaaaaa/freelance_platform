@@ -95,20 +95,20 @@ button:hover {
 }
 .profile-details {
     display: flex;
-    justify-content: space-between; /* Распределяет контент по краям */
+    justify-content: space-between; 
 }
 
 .left-section, .right-section {
-    width: 48%; /* Дает каждой секции примерно половину ширины контейнера */
-    padding: 10px; /* Добавляет немного внутреннего отступа */
+    width: 48%; 
+    padding: 10px; 
 }
 
-/* Стили для правой секции, если нужно что-то специфическое */
+
 .right-section {
-    text-align: right; /* Выравнивает текст и ссылки по правому краю */
+    text-align: right; 
 }
 
-/* Стили для ссылок в разделе резюме */
+
 .profile-details a {
     display: inline-block;
     background-color: #4CAF50;
@@ -123,11 +123,11 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Дополнительные стили, если нужно */
+
 .h2 {
-    margin: 10px 0; /* Обеспечивает небольшой отступ для заголовков */
+    margin: 10px 0; 
 }
 
 .p {
-    line-height: 1.5; /* Улучшает читабельность текста, задавая межстрочный интервал */
+    line-height: 1.5; 
 }

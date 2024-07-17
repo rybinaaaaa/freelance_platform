@@ -24,7 +24,7 @@ const EditTaskModal = ({ taskId, onClose, onTaskUpdated }) => {
         const authToken = Cookies.get('authToken');
 
         try {
-            const response = await axios.put(`http://localhost:8080/rest/tasks/posted/${taskId}`, updatedTask, {
+            const response = await axios.put(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted/${taskId}`, updatedTask, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': authToken

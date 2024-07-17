@@ -16,7 +16,7 @@ const EditProfilePage = () => {
 
   const fetchUserIdByUsername = async (username) => {
     try {
-      const response = await axios.get(`http://localhost:8080/rest/users/username/${username}`);
+      const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/users/username/${username}`);
       setUserId(response.data.id);
       setLoading(false);
       fetchUserData(response.data.id);
@@ -28,7 +28,7 @@ const EditProfilePage = () => {
 
   const fetchUserData = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/rest/users/${userId}`);
+      const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/users/${userId}`);
       const { firstName, lastName, email } = response.data;
       setFirstName(firstName);
       setLastName(lastName);
@@ -51,16 +51,16 @@ const EditProfilePage = () => {
     const authToken = Cookies.get('authToken');
 
     try {
-      const response = await axios.put(`http://localhost:8080/rest/users/${userId}`, formData, {
+      const response = await axios.put(`https://freelance-platform-3-0-2.onrender.com/rest/users/${userId}`, formData, {
         headers: {
           'Authorization': authToken
         }
       });
       console.log('User updated successfully:', response.data);
-      // Добавьте здесь логику для обновления пользовательского интерфейса, например, отображение сообщения об успешном обновлении
+  
     } catch (error) {
       console.error('Error updating user:', error);
-      // Обработка ошибок, например, вывод ошибки на экран или перенаправление пользователя
+     
     }
   };
 

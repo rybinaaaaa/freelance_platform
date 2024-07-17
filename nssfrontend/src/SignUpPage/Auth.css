@@ -1,11 +1,11 @@
-/* Основные контейнеры и разметка */
+
 .main-container {
     display: flex;
     margin: 0 auto;
     align-items: center;
-    justify-content: space-between; /* Разделение на две части */
+    justify-content: space-between; 
     height: 100vh;
-    color: #333; /* Цвет текста */
+    color: #333; 
     max-width: 90%;
 
 }
@@ -31,10 +31,10 @@
     object-fit: cover;
 }
 
-/* Форма и элементы формы */
+
 .form-container {
     width: 100%;
-    max-width: 360px; /* Ширина формы */
+    max-width: 360px; 
     margin: auto;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .signup-button {
-    background-color: #4CAF50; /* Зеленая кнопка */
+    background-color: #4CAF50; 
     color: white;
     border: none;
     cursor: pointer;
@@ -62,7 +62,7 @@
     background-color: #45a049;
 }
 
-/* Ссылка на вход */
+
 .login-prompt {
     text-align: center;
     margin-top: 20px;

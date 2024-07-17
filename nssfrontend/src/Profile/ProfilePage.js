@@ -3,7 +3,7 @@ import './Profile.css';
 import { useNavigate } from 'react-router-dom';
 import TasksList from '../TaskList/TasksList';
 import ProposalsList from '../ProposalsList/ProposalsList';
-import PickedOrders from '../PickedOrders/PickedOrders'; // Подразумевается, что этот компонент создан
+import PickedOrders from '../PickedOrders/PickedOrders'; 
 import Cookies from 'js-cookie';
 
 const ProfilePage = ({ username, rating, role, feedbacks, bio, resumeLink, email, phone, tasks, orders, proposals }) => {

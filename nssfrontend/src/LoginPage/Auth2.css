@@ -1,4 +1,4 @@
-/* Страница входа использует некоторые общие стили с регистрацией */
+
 .body{
     height: 100vh;
 }
@@ -10,10 +10,10 @@
 }
 
 .form-container {
-    width: 360px; /* Ширина формы */
+    width: 360px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Тень вокруг формы */
-    background: white; /* Фон формы */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+    background: white; 
     border-radius: 8px;
 }
 

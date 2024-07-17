@@ -3,15 +3,15 @@
     background-size: cover;
     height: 600px;
     display: flex;
-    align-items: center; /* Вертикальное выравнивание */
-    justify-content: center; /* Горизонтальное выравнивание */
+    align-items: center; 
+    justify-content: center; 
 }
 
 .overlay {
     text-align: center;
     color: white;
-    max-width: 600px; /* Максимальная ширина текста и кнопок */
-    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон для текста */
+    max-width: 600px; 
+    background-color: rgba(0, 0, 0, 0.5); 
     padding: 20px;
     border-radius: 10px;
 }
@@ -25,7 +25,7 @@
     padding: 10px 20px;
     border: none;
     color: white;
-    background-color: #e114a6; /* Пример цвета для кнопок */
+    background-color: #e114a6;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -36,5 +36,5 @@
 }
 
 .btn-get-started:hover, .btn-log-in:hover {
-    background-color: #504ddc; /* Темнее при наведении */
+    background-color: #504ddc; 
 }

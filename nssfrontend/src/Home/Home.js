@@ -1,16 +1,16 @@
 import React from 'react';
-import './Home.css'; // Убедитесь, что создали и подключили файл стилей
+import './Home.css'; 
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        navigate('/login'); // Перенаправление на страницу входа
+        navigate('/login'); 
     };
 
     const handleSignUp = () => {
-        navigate('/signup'); // Перенаправление на страницу регистрации
+        navigate('/signup'); 
     };
 
     return (

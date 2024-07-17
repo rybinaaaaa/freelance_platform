@@ -13,15 +13,15 @@ const PickedOrders = () => {
             const authToken = Cookies.get('authToken');
 
             try {
-                const response = await axios.get(`http://localhost:8080/rest/tasks/taken`, {
+                const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/taken`, {
                     headers: { 'Authorization': authToken },
                     params: {
-                        expired: false // Убедитесь, что API поддерживает этот параметр, если нет, удалите его
+                        expired: false 
                     }
                 });
 
                 if (response.status === 200) {
-                    // Фильтруем задачи по статусу ASSIGNED, если API не делает этого автоматически
+                
                     const assignedTasks = response.data.filter(task => task.status === 'ASSIGNED');
                     setTasks(assignedTasks);
                 } else {

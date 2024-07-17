@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './TaskForm.css'; // Убедитесь, что стили подключены
+import './TaskForm.css'; 
 import Cookies from 'js-cookie';
 
 function TaskForm() {
@@ -8,7 +8,7 @@ function TaskForm() {
     const [problem, setProblem] = useState('');
     const [deadline, setDeadline] = useState('');
     const [payment, setPayment] = useState('');
-    const [selectedType, setSelectedType] = useState(''); // Здесь будет храниться выбранный тип задачи
+    const [selectedType, setSelectedType] = useState(''); 
     const [showDropdown, setShowDropdown] = useState(false);
 
     const savedUsername = Cookies.get('username');
@@ -42,15 +42,15 @@ function TaskForm() {
             deadline: new Date(deadline).toISOString(),
             taskStatus: 'UNASSIGNED',
             payment,
-            type: selectedType // Только один выбранный тип задачи
+            type: selectedType 
         };
 
         try {
-            // Отправка данных на сервер с использованием axios
-            const response = await axios.post('http://localhost:8080/rest/tasks', taskData, {
+          
+            const response = await axios.post('https://freelance-platform-3-0-2.onrender.com/rest/tasks', taskData, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': savedAuthToken // Подставляем реальный токен из кук
+                    'Authorization': savedAuthToken 
                 }
             });
 
@@ -60,7 +60,7 @@ function TaskForm() {
                 setProblem('');
                 setDeadline('');
                 setPayment('');
-                setSelectedType(''); // Сброс выбранного типа
+                setSelectedType(''); 
             } else {
                 alert('Failed to create task');
                 console.log('Failed to create task with status:', response.status);
