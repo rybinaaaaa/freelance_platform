@@ -24,5 +24,18 @@ public abstract class SendEmailStrategy {
         this.mapper = mapper;
     }
 
+    /**
+     * Sends an email with the specified subject and body based on provided JSON data.
+     *
+     * @param taskJson a JSON string representing task-related data. The specific structure
+     *                 and the path to the email address within this JSON should be defined
+     *                 by the concrete implementation.
+     * @param userJson a JSON string representing user-related data. The specific structure
+     *                 and the path to the email address within this JSON should be defined
+     *                 by the concrete implementation.
+     * @param subject the subject of the email.
+     * @param body the body of the email.
+     * @throws JsonProcessingException if there is an error processing the JSON data.
+     */
     public abstract void sendEmail(String taskJson, String userJson , String subject, String body) throws JsonProcessingException;
 }

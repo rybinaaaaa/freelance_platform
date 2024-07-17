@@ -21,17 +21,20 @@ public class SendAllUsersStrategy extends SendEmailStrategy{
         this.userService = userService;
     }
 
+    /**
+     * Sends an email with the specified subject and body to all users.
+     *
+     * <p>This method retrieves a list of email addresses from the user service,
+     * and for each email address in the list, it sends an email with the provided
+     * subject and body. The email sending is handled by the {@code emailSender}.</p>
+     *
+     * @param taskJson a JSON string representing task-related data (not used in this implementation)
+     * @param userJson a JSON string representing user-related data (not used in this implementation)
+     * @param subject the subject of the email
+     * @param body the body of the email
+     */
     @Override
     public void sendEmail(String taskJson, String userJson , String subject, String body) {
-        //todo change uri to prod host
-//        List<String> toEmails = webClient
-//                .get()
-//                .uri("http://localhost:8080/rest/users")
-//                .retrieve()
-//                .bodyToFlux(UserDTO.class)
-//                .map(UserDTO::getEmail)
-//                .collectList()
-//                .block();
         List<String> toEmails = userService.getAllUserEmails();
 
         if (toEmails != null) {

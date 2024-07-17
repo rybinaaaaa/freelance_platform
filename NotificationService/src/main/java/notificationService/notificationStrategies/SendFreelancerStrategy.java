@@ -11,6 +11,16 @@ public class SendFreelancerStrategy extends SendEmailStrategy {
         super(webClient, emailSender, mapper);
     }
 
+    /**
+     * Sends an email to the specified recipients based on the provided JSON data, subject, and body.
+     *
+     * @param taskJson JSON string representing task details which includes the email address of a freelancer.
+     * @param userJson JSON string representing user details which includes the email address of a user.
+     * @param subject The subject of the email to be sent.
+     * @param body The body content of the email to be sent.
+     *
+     * @throws JsonProcessingException If there is an error processing the JSON input.
+     */
     @Override
     public void sendEmail(String taskJson, String userJson , String subject, String body) throws JsonProcessingException {
         if (taskJson!=null){

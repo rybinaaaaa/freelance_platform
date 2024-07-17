@@ -18,6 +18,13 @@ public class EmailSenderService {
         this.mailSender = mailSender;
     }
 
+    /**
+     * Sends an email with the specified subject and body to the given recipient.
+     *
+     * @param toEmail the recipient's email address
+     * @param subject the subject of the email
+     * @param body the body of the email
+     */
     public void sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("1task.freelance@gmail.com");

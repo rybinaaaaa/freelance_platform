@@ -29,6 +29,17 @@ public class TaskChangesConsumer extends ChangesConsumer {
         this.userService = userService;
     }
 
+    /**
+     * Consumes messages from Kafka topics related to task and user changes and sends email notifications
+     * based on the type of event.
+     *
+     * @param record The Kafka {@link ConsumerRecord} containing the message to be processed.
+     *               The message's value is expected to be a JSON string representing task details
+     *               and user information.
+     *
+     * @throws JsonProcessingException If there is an error processing the JSON string from the record.
+     * @throws IllegalArgumentException If the message topic is not one of the supported topics.
+     */
     @KafkaListener(
             topics = {"task_posted", "freelancer_assigned", "task_accepted", "freelancer_removed", "task_send_on_review"},
             groupId = "myGroup"

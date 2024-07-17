@@ -24,6 +24,15 @@ public class UserChangesConsumer extends ChangesConsumer {
         super(mapper, notificationSender, emailSenderService, webClient);
     }
 
+    /**
+     * Consumes messages from Kafka topics related to user changes and sends an email notification
+     * based on the type of change.
+     *
+     * @param record The Kafka {@link ConsumerRecord} containing the message to be processed.
+     *               The message's value is expected to be a JSON string representing user details.
+     *
+     * @throws JsonProcessingException If there is an error processing the JSON string from the record.
+     */
     @KafkaListener(
             topics = {"user_created","user_updated","user_deleted"},
             groupId = "myGroup"
