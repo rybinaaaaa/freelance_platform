@@ -15,7 +15,7 @@ const Tasks = () => {
         const fetchTasks = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:8080/rest/tasks/taskBoard?fromNewest=false'); // Fetching tasks from backend
+                const response = await fetch('https://freelance-platform-3-0-2.onrender.com/rest/tasks/taskBoard?fromNewest=false'); // Fetching tasks from backend
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
