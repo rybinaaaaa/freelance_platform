@@ -20,9 +20,11 @@
 5. Switch to the filonole branch by running `git checkout filonole`.
 7. Navigate to the project directory after cloning by running the command: `cd freelance_platform\nssfrontend`.;
 8. To install the project dependencies, run the command `npm install`.
-9. To start the project in development mode, run the command `npm run start`.
-10. Open your browser and navigate to http://localhost:3000. Once the page loads, you will see a page."
-11. Open Chrome Dev Tools and navigate to the Console tab; there should be no errors.
+9. Start Zookeeper `.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties` 
+10. Start Kafka `.\bin\windows\kafka-server-start.bat .\config\server.properties` 
+11. To start the project in development mode, run the command `npm run start`.
+12. Open your browser and navigate to http://localhost:3000. Once the page loads, you will see a page."
+13. Open Chrome Dev Tools and navigate to the Console tab; there should be no errors.
 
 <br>
 
@@ -35,6 +37,8 @@
 #### -JavaScript
 
 #### -ReactJS
+
+#### -Kafka
 
 <br>
 
@@ -49,8 +53,12 @@ The application must be able to perform the following operations with tasks:
     - ✅ Delete an user;
     - ✅ Retrieve all tasks;;
     - ✅ Delete a task;
+    - ✅ Assign freelancers to tasks;
     - ✅ Edit a task;
     - ✅ Mark a task as completed;
+    - ✅ Sent a proposal;
+    - ✅ Confirm a proposal;
+
     
 - ✅ All task operations must be connected to the API;
 - ✅ A task filter must be implemented;
