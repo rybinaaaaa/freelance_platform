@@ -14,7 +14,7 @@ const LoginPage = () => {
         const authHeader = `Basic ${token}`;
 
         try {
-            const response = await axios.post('https://freelance-platform-3-0-2.onrender.com/login?', {}, {
+            const response = await axios.post('http://localhost:8080/login?', {}, {
                 headers: {
                     'Authorization': authHeader
                 },

@@ -13,7 +13,7 @@ const PickedOrders = () => {
             const authToken = Cookies.get('authToken');
 
             try {
-                const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/taken`, {
+                const response = await axios.get(`http://localhost:8080/rest/tasks/taken`, {
                     headers: { 'Authorization': authToken },
                     params: {
                         expired: false 

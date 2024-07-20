@@ -44,7 +44,7 @@ const SignUpPage = () => {
         console.log('Submitting user data:', userData); // Log the data before sending
 
         try {
-            const response = await fetch('https://freelance-platform-3-0-2.onrender.com/rest/users', {
+            const response = await fetch('http://localhost:8080/rest/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

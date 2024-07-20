@@ -33,7 +33,7 @@ const TasksList = () => {
     const fetchTasks = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted', {
+            const response = await axios.get('http://localhost:8080/rest/tasks/posted', {
                 headers: {
                     'Authorization': authToken
                 },
@@ -76,7 +76,7 @@ const TasksList = () => {
     const handleTaskUpdated = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted', {
+            const response = await axios.get('http://localhost:8080/rest/tasks/posted', {
                 headers: {
                     'Authorization': authToken
                 },
@@ -104,7 +104,7 @@ const TasksList = () => {
     const handleDeleteClick = async (taskId) => {
 
         try {
-            const response = await axios.delete(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted/${taskId}`, {
+            const response = await axios.delete(`http://localhost:8080/rest/tasks/posted/${taskId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': authToken
