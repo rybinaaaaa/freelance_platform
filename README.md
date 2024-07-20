@@ -33,8 +33,8 @@ https://docs.google.com/document/d/14QOzUKwhIsbmJxZe33ymWSRt-85Maz07XX8YSVdFAus/
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://gitlab.fel.cvut.cz/beliadan/nss_semesterwork.git
-cd nss_semesterwork
+git clone https://gitlab.fel.cvut.cz/beliadan/freelance_platform.git
+cd freelance_platform
 ```
 
 ### Step 2: Start Docker Containers
@@ -62,7 +62,7 @@ mvn spring-boot:run
 Open another terminal and navigate to the NotificationService directory, build the project using Maven, and start the application:
 
 ```bash
-cd nss_semesterwork/NotificationService
+cd freelance_platform/NotificationService
 mvn clean install
 mvn spring-boot:run
 ```
