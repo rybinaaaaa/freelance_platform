@@ -4,9 +4,9 @@
 
 ## 📜 Table of Contents
 
--   [🚀 Run the project](#-Run the project)
--   [🤖 Technologies Used](#-Technologies Used)
--   [🎨 Conceptual Task](#-Conceptual Task)
+-   [🚀 Run the project](#-run-the-project)
+-   [🤖 Technologies Used](#-technologies-used)
+-   [🎨 Conceptual Task](#-conceptual-task)
 -   [🤔 FAQ](#-faq)
 
 <br>
