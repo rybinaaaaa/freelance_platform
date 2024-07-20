@@ -1,0 +1,133 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+}
+
+.profile-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.profile-subheader {
+    display: flex;
+    align-items: center;
+}
+
+.rating, .role {
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.profile-body {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.profile-about, .profile-details {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.profile-about h2, .profile-details h2 {
+    color: #333;
+    font-size: 20px;
+}
+
+.profile-details a {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.profile-details a:hover {
+    background-color: #45a049;
+}
+
+.profile-details p, .profile-about p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.profile-tasks {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+}
+
+.profile-tasks button {
+    flex-grow: 1;
+    margin: 2px;
+}
+.profile-details {
+    display: flex;
+    justify-content: space-between; 
+}
+
+.left-section, .right-section {
+    width: 48%; 
+    padding: 10px; 
+}
+
+
+.right-section {
+    text-align: right; 
+}
+
+
+.profile-details a {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.profile-details a:hover {
+    background-color: #45a049;
+}
+
+
+.h2 {
+    margin: 10px 0; 
+}
+
+.p {
+    line-height: 1.5; 
+}

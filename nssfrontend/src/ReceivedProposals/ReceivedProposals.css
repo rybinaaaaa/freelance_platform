@@ -1,0 +1,33 @@
+.task-proposals {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.task-proposals h2 {
+    margin-top: 0;
+}
+
+.task-proposals ul {
+    list-style: none;
+    padding: 0;
+}
+
+.task-proposals li {
+    margin-bottom: 5px;
+}
+
+.confirm-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: darkgreen;
+}

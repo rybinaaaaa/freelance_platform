@@ -1,0 +1,70 @@
+.tasks-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Распределите пространство между элементами */
+    padding: 20px;
+}
+
+.task-card {
+    flex: 1 1 40%; /* Занимает 40% линии с учетом возможности роста и сжатия */
+    margin: 10px; /* Обеспечивает отступы */
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background-color: #fff;
+    position: relative; /* Для позиционирования кнопки */
+}
+
+.task-card h3 {
+    margin-top: 0;
+}
+
+.tags {
+    margin-top: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.see-more {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+.pagination-wrapper {
+    width: 100%; /* Занимает полную ширину */
+    display: flex;
+    justify-content: center; /* Центрирование содержимого */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center; /* Центрирование пагинации */
+    padding: 20px;
+    list-style-type: none; /* Убирает стандартные маркеры списка */
+    flex-wrap: wrap; /* Обеспечивает перенос на новую строку при необходимости */
+}
+
+.pagination li {
+    margin: 0 5px; /* Расстояние между элементами пагинации */
+    cursor: pointer;
+    color: #007bff;
+}
+
+.pagination li.active {
+    font-weight: bold;
+    color: darkblue;
+}
+
+

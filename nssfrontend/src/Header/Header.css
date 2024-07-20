@@ -1,0 +1,48 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--navbar-padding);
+    height: var(--navbar-height);
+}
+
+.logo {
+    height: var(--logo-height);
+    display: block;
+    margin-bottom: -8px;
+    object-fit: contain;
+}
+
+.menu {
+    display: flex;
+    font-weight: 10;
+    align-items: center;
+}
+
+.menu a {
+    font-size: large;
+    font-weight: 700;
+    color: var(--menu-link-color);
+    text-decoration: none;
+    margin: var(--menu-link-margin);
+}
+
+.menu .active {
+    border-bottom: 2px solid #666; 
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.username {
+    color: black; 
+    font-size: large;
+    font-weight: 700;
+}
+
+.profile-icon{
+    width: 70px;
+    height: 50px;
+}

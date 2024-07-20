@@ -1,0 +1,102 @@
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container label {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.form-container input[type="text"],
+.form-container input[type="datetime-local"],
+.form-container input[type="number"],
+.form-container textarea,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-container textarea {
+    height: 150px; 
+}
+
+.form-container button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+.form-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 15px;
+}
+.dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.checkbox-group {
+    display: none; 
+    background: white;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    box-sizing: border-box; 
+    padding: 10px 0;
+}
+.checkbox-group.show {
+    display: block; 
+}
+.checkbox-label {
+    display: block;
+    margin: 10px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.form-container button {
+    align-self: center;
+    margin-top: 20px; 
+}
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    height: auto; 
+    overflow: visible; 
+}
+
+

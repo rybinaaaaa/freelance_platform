@@ -1,0 +1,40 @@
+.home-container {
+    background: url('../img/main1.webp') no-repeat center center fixed;
+    background-size: cover;
+    height: 600px;
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+}
+
+.overlay {
+    text-align: center;
+    color: white;
+    max-width: 600px; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.buttons {
+    margin-top: 20px;
+}
+
+.btn-get-started, .btn-log-in {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    background-color: #e114a6;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-log-in {
+    background-color: transparent;
+    border: 1px solid white;
+}
+
+.btn-get-started:hover, .btn-log-in:hover {
+    background-color: #504ddc; 
+}
