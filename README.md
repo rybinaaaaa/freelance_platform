@@ -71,15 +71,11 @@ mvn spring-boot:run
 1. [Download and install](https://nodejs.org/en/) the latest LTS version of Node.js.
 2. Run `node -v` in the console and make sure that the installed Node.js version is not lower than v8.11.3.;
 3. Run `npm -v` in the console and make sure that the installed npm version is not lower than 5.6.0.
-4. Clone and start this project: `git clone bb599884b29b0baa3d7088fd402023959583fde8`;
-5. Switch to the filonole branch by running `git checkout filonole`.
-7. Navigate to the project directory after cloning by running the command: `cd freelance_platform\nssfrontend`.;
-8. To install the project dependencies, run the command `npm install`.
-9. Start Zookeeper `.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties`
-10. Start Kafka `.\bin\windows\kafka-server-start.bat .\config\server.properties`
-11. To start the project in development mode, run the command `npm run start`.
-12. Open your browser and navigate to http://localhost:3000. Once the page loads, you will see a page."
-13. Open Chrome Dev Tools and navigate to the Console tab; there should be no errors.
+4. Navigate to the project directory after cloning by running the command: `cd freelance_platform\nssfrontend`.;
+5. To install the project dependencies, run the command `npm install`.
+6. To start the project in development mode, run the command `npm run start`.
+7. Open your browser and navigate to http://localhost:3000. Once the page loads, you will see a page."
+8. Open Chrome Dev Tools and navigate to the Console tab; there should be no errors.
 
 ### Conclusion
 
@@ -89,7 +85,9 @@ Your freelance platform should now be up and running. You can access the service
 
 Here you can explore our web service:
 
-...
+backend: https://freelance-platform-3-0-2.onrender.com
+
+frontend: https://shestser.github.io/nssSp/
 
 Note: at the moment, not all the functionality of the application works on the product server
 
