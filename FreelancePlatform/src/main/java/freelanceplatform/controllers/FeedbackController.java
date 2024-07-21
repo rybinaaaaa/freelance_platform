@@ -35,7 +35,6 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
-    private final UserDetailsService userDetailsService;
     private final Mapper mapper;
 
     private final static ResponseEntity<Void> FORBIDDEN1 = new ResponseEntity<>(FORBIDDEN);
@@ -69,9 +68,9 @@ public class FeedbackController {
     /**
      * Updates an existing feedback.
      *
-     * @param id the ID of the feedback to update
+     * @param id          the ID of the feedback to update
      * @param feedbackDTO the feedback DTO with updated information
-     * @param auth the authentication object
+     * @param auth        the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
@@ -83,19 +82,15 @@ public class FeedbackController {
         if (!hasUserAccess(feedbackDTO, auth)) return FORBIDDEN1;
 
         Feedback newFb = mapper.feedbackDtoToFeedback(feedbackDTO);
-        try {
-            feedbackService.update(newFb);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        feedbackService.update(newFb);
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * Saves a new feedback.
      *
      * @param feedbackCreationDTO the feedback DTO to save
-     * @param auth the authentication object
+     * @param auth                the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
@@ -106,15 +101,11 @@ public class FeedbackController {
 
         Feedback newFb = mapper.feedbackCreationDtoToFeedback(feedbackCreationDTO);
 
-        try {
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(feedbackService.save(newFb)
-                            .getId()).toUri();
-            return ResponseEntity.created(location).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(feedbackService.save(newFb)
+                        .getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     /**
@@ -135,7 +126,7 @@ public class FeedbackController {
      * Checks if the authenticated user has access to the feedback.
      *
      * @param feedbackDTO the feedback DTO
-     * @param auth the authentication object
+     * @param auth        the authentication object
      * @return true if the user has access, false otherwise
      */
     private static Boolean hasUserAccess(FeedbackDTO feedbackDTO, Authentication auth) {
@@ -147,7 +138,7 @@ public class FeedbackController {
      * Checks if the authenticated user has access to the feedback.
      *
      * @param feedbackCreationDTO the feedbackCreation DTO
-     * @param auth the authentication object
+     * @param auth                the authentication object
      * @return true if the user has access, false otherwise
      */
     private static Boolean hasUserAccess(FeedbackCreationDTO feedbackCreationDTO, Authentication auth) {

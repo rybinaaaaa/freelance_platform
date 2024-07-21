@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 
 @Slf4j
@@ -38,7 +39,7 @@ public class SolutionController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> save(@RequestBody Solution solution){
+    public ResponseEntity<Void> save(@RequestBody Solution solution) {
         solutionService.save(solution);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -53,12 +54,8 @@ public class SolutionController {
      * @return ResponseEntity containing the retrieved Solution object if found, or 404 if not found.
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Solution> getById(@PathVariable Integer id){
-        try {
-            return ResponseEntity.ok(solutionService.getById(id));
-        } catch (NotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Solution> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(solutionService.getById(id));
     }
 
     /**
@@ -69,19 +66,15 @@ public class SolutionController {
      * @return ResponseEntity indicating success or failure of the update operation.
      */
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping(value = "/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Solution updatedSolution, Authentication auth){
-        try {
-            final Solution solution = solutionService.getById(id);
-            if (!hasAccess(solution, auth))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            solution.setLink(updatedSolution.getLink());
-            solution.setDescription(updatedSolution.getDescription());
-            solutionService.update(solution);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Solution updatedSolution, Authentication auth) {
+        Solution solution = solutionService.getById(id);
+        if (!hasAccess(solution, auth))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        solution.setLink(updatedSolution.getLink());
+        solution.setDescription(updatedSolution.getDescription());
+        solutionService.update(solution);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -92,15 +85,11 @@ public class SolutionController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth){
-        try {
-            final Solution solution = solutionService.getById(id);
-            if (!hasAccess(solution, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            solutionService.delete(solution);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth) {
+        Solution solution = solutionService.getById(id);
+        if (!hasAccess(solution, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        solutionService.delete(solution);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -110,7 +99,7 @@ public class SolutionController {
      * details is the same as the freelancer assigned to the task related to the provided solution.
      *
      * @param solution the solution for which access is being checked
-     * @param auth the authentication object containing the user details
+     * @param auth     the authentication object containing the user details
      * @return true if the authenticated user is the freelancer assigned to the task, false otherwise
      */
     private boolean hasAccess(Solution solution, Authentication auth) {

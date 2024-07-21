@@ -95,7 +95,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllTaskBoardByPostedDate(boolean fromNewest){
+    public List<Task> getAllTaskBoardByPostedDate(boolean fromNewest){
         if (fromNewest) {
             return taskRepo.findAllByStatusFromNewest(TaskStatus.UNASSIGNED);
         } else {
@@ -111,7 +111,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllTaskBoardByTypeAndPostedDate(TaskType type, boolean fromNewest) {
+    public List<Task> getAllTaskBoardByTypeAndPostedDate(TaskType type, boolean fromNewest) {
         if (fromNewest) {
             return taskRepo.findAllByTypeAndStatusFromNewest(type, TaskStatus.UNASSIGNED);
         } else {
@@ -127,7 +127,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllTakenByUserIdAndDeadlineStatus(Integer userId, boolean expired){
+    public List<Task> getAllTakenByUserIdAndDeadlineStatus(Integer userId, boolean expired){
         if (expired){
             return taskRepo.findAllTakenByFreelancerIdDeadlineExpired(userId);
         } else {
@@ -144,7 +144,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllTakenByUserIdAndStatusAndDeadlineStatus(Integer userId, TaskStatus taskStatus, boolean expired){
+    public List<Task> getAllTakenByUserIdAndStatusAndDeadlineStatus(Integer userId, TaskStatus taskStatus, boolean expired){
         if (expired){
             return taskRepo.findAllTakenByFreelancerIdAndStatusDeadlineExpired(userId, taskStatus);
         } else {
@@ -160,7 +160,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllPostedByUserIdAndExpiredStatus(Integer userId, boolean expired){
+    public List<Task> getAllPostedByUserIdAndExpiredStatus(Integer userId, boolean expired){
         if (expired){
             return taskRepo.findAllPostedByCustomerIdDeadlineExpired(userId);
         } else {
@@ -177,7 +177,7 @@ public class TaskService {
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public Iterable<Task> getAllPostedByUserIdAndStatusAndExpiredStatus(Integer userId, TaskStatus taskStatus , boolean expired){
+    public List<Task> getAllPostedByUserIdAndStatusAndExpiredStatus(Integer userId, TaskStatus taskStatus , boolean expired){
         if (expired){
             return taskRepo.findAllPostedByCustomerIdAndStatusDeadlineExpired(userId, taskStatus);
         } else {

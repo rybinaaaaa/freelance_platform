@@ -65,9 +65,9 @@ public class ProposalController {
     /**
      * Updates an existing proposal.
      *
-     * @param id the ID of the proposal to update
+     * @param id          the ID of the proposal to update
      * @param proposalDTO the proposal DTO with updated information
-     * @param auth the authentication object
+     * @param auth        the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
@@ -79,12 +79,9 @@ public class ProposalController {
         if (!hasUserAccess(proposalDTO, auth)) return FORBIDDEN1;
 
         Proposal newPr = mapper.proposalDTOToProposal(proposalDTO);
-        try {
-            proposalService.update(newPr);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        proposalService.update(newPr);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -102,14 +99,11 @@ public class ProposalController {
         if (!hasUserAccess(proposalCreationDTO, auth)) return FORBIDDEN1;
 
         Proposal newPr = mapper.proposalCreationDTOToProposal(proposalCreationDTO);
-        try {
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(proposalService.save(newPr).getId()).toUri();
-            return ResponseEntity.created(location).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(proposalService.save(newPr).getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     /**
@@ -130,7 +124,7 @@ public class ProposalController {
      * Checks if the authenticated user has access to the proposal.
      *
      * @param proposalDTO the proposal DTO
-     * @param auth the authentication object
+     * @param auth        the authentication object
      * @return true if the user has access, false otherwise
      */
     private static Boolean hasUserAccess(ProposalDTO proposalDTO, Authentication auth) {
@@ -142,7 +136,7 @@ public class ProposalController {
      * Checks if the authenticated user has access to the proposal.
      *
      * @param proposalCreationDTO the proposal DTO
-     * @param auth the authentication object
+     * @param auth                the authentication object
      * @return true if the user has access, false otherwise
      */
     private static Boolean hasUserAccess(ProposalCreationDTO proposalCreationDTO, Authentication auth) {

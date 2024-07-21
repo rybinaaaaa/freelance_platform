@@ -10,7 +10,6 @@ import freelanceplatform.exceptions.ValidationException;
 import freelanceplatform.model.Resume;
 import freelanceplatform.model.User;
 import freelanceplatform.security.model.UserDetails;
-import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing users.
@@ -38,19 +39,17 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final TaskService taskService;
     private final Mapper mapper;
 
     /**
      * Constructs the UserController with the necessary dependencies
+     *
      * @param userService the service for managing users
-     * @param taskService the service for managing tasks
-     * @param mapper the mapper for converting between entities and DTOs
+     * @param mapper      the mapper for converting between entities and DTOs
      */
     @Autowired
-    public UserController(UserService userService, TaskService taskService, Mapper mapper) {
+    public UserController(UserService userService, Mapper mapper) {
         this.userService = userService;
-        this.taskService = taskService;
         this.mapper = mapper;
     }
 
@@ -62,12 +61,8 @@ public class UserController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
-        try {
-            final UserDTO userDTO = mapper.userToDTO(userService.find(id));
-            return ResponseEntity.ok(userDTO);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        final UserDTO userDTO = mapper.userToDTO(userService.find(id));
+        return ResponseEntity.ok(userDTO);
     }
 
     /**
@@ -78,12 +73,8 @@ public class UserController {
      */
     @GetMapping(value = "/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUserByUserName(@PathVariable String username) {
-        try {
-            final UserDTO userDTO = mapper.userToDTO(userService.findByUsername(username));
-            return ResponseEntity.ok(userDTO);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        final UserDTO userDTO = mapper.userToDTO(userService.findByUsername(username));
+        return ResponseEntity.ok(userDTO);
     }
 
     /**
@@ -119,6 +110,7 @@ public class UserController {
 
     /**
      * Handles error when created existed user
+     *
      * @param ex validation exception
      * @return response with conflict status
      */
@@ -149,37 +141,33 @@ public class UserController {
     /**
      * Updates a user's information.
      *
-     * @param id the ID of the user to update
+     * @param id              the ID of the user to update
      * @param userDTOToUpdate the user data to update
-     * @param auth the authentication object
+     * @param auth            the authentication object
      * @return the ResponseEntity indicating the result of the operation
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable Integer id,
                                            @RequestBody UserDTO userDTOToUpdate, Authentication auth) {
-        try {
-            final User user = ((UserDetails) auth.getPrincipal()).getUser();
+        final User user = ((UserDetails) auth.getPrincipal()).getUser();
 
-            if (!id.equals(userDTOToUpdate.getId())) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            final User userToUpdate = userService.find(id);
-            if (!user.getId().equals(userToUpdate.getId())) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
-            userToUpdate.setFirstName(userDTOToUpdate.getFirstName());
-            userToUpdate.setLastName(userDTOToUpdate.getLastName());
-            userToUpdate.setEmail(userDTOToUpdate.getEmail());
-
-            userService.update(userToUpdate);
-
-            final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/current");
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
+        if (!id.equals(userDTOToUpdate.getId())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        final User userToUpdate = userService.find(id);
+        if (!user.getId().equals(userToUpdate.getId())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        userToUpdate.setFirstName(userDTOToUpdate.getFirstName());
+        userToUpdate.setLastName(userDTOToUpdate.getLastName());
+        userToUpdate.setEmail(userDTOToUpdate.getEmail());
+
+        userService.update(userToUpdate);
+
+        final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/current");
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 
     /**
@@ -192,12 +180,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteUserByAdmin(@PathVariable Integer id) {
-        final User userToDelete = userService.find(id);
-        if (userToDelete != null) {
-            userService.delete(userToDelete);
-            final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        } else return ResponseEntity.notFound().build();
+        return Optional.ofNullable(userService.find(id))
+                .map(user -> {
+                    userService.delete(user);
+                    final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
+                    return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
+                })
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     /**
@@ -209,14 +198,16 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteAccount(Authentication auth){
-        final User userToDelete = ((UserDetails) auth.getPrincipal()).getUser();
-        if (userToDelete != null) {
-            userService.delete(userToDelete);
-            final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        } else return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteAccount(Authentication auth) {
+        return Optional.ofNullable(((UserDetails) auth.getPrincipal()).getUser())
+                .map(user -> {
+                    userService.delete(user);
+                    HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
+                    return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
+                })
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
+
 
     /**
      * Retrieves the resume of the current authenticated user.
@@ -227,35 +218,29 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/myResume")
     public ResponseEntity<Resume> getResume(Authentication auth) {
-        final User user = ((UserDetails) auth.getPrincipal()).getUser();
-        try {
-            final Resume resume = userService.getUsersResume(user);
-            return ResponseEntity.ok(resume);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        User user = ((UserDetails) auth.getPrincipal()).getUser();
+        Resume resume = userService.getUsersResume(user);
+        return ResponseEntity.ok(resume);
     }
 
     /**
      * Saves the resume of the current authenticated user.
      *
      * @param filename the filename of the resume
-     * @param file the resume file
-     * @param auth the authentication object
+     * @param file     the resume file
+     * @param auth     the authentication object
      * @return the ResponseEntity indicating the result of the operation
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/addResume")
     public ResponseEntity<Void> saveResume(@RequestParam("filename") String filename,
                                            @RequestParam("content") MultipartFile file,
-                                           Authentication auth) {
-        final User user = ((UserDetails) auth.getPrincipal()).getUser();
-        try {
-            userService.saveResume(filename, file.getBytes(), user);
-            final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/current");
-            return new ResponseEntity<>(headers, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+                                           Authentication auth) throws IOException {
+        User user = ((UserDetails) auth.getPrincipal()).getUser();
+
+        userService.saveResume(filename, file.getBytes(), user);
+
+        final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/current");
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 }

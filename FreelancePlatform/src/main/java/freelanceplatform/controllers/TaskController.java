@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
@@ -50,12 +51,12 @@ public class TaskController {
      * Saves a new task based on the provided TaskCreationDTO.
      *
      * @param taskDTO the TaskCreationDTO object containing the task details
-     * @param auth the Authentication object for the current user
+     * @param auth    the Authentication object for the current user
      * @return ResponseEntity with the URI of the newly created task
      */
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> save(@RequestBody TaskCreationDTO taskDTO, Authentication auth){
+    public ResponseEntity<Void> save(@RequestBody TaskCreationDTO taskDTO, Authentication auth) {
         final User user = ((UserDetails) auth.getPrincipal()).getUser();
         final Task task = mapper.taskDTOToTask(taskDTO);
         task.setCustomer(user);
@@ -73,13 +74,9 @@ public class TaskController {
      * @return ResponseEntity with the task data or 404 if not found
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDTO> getById(@PathVariable Integer id){
-        try {
-            final TaskDTO taskDTO = mapper.taskToTaskDTO(taskService.getById(id));
-            return ResponseEntity.ok(taskDTO);
-        } catch (NotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TaskDTO> getById(@PathVariable Integer id) {
+        final TaskDTO taskDTO = mapper.taskToTaskDTO(taskService.getById(id));
+        return ResponseEntity.ok(taskDTO);
     }
 
     /**
@@ -91,15 +88,15 @@ public class TaskController {
      */
     @GetMapping(value = "/taskBoard", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<TaskDTO>> getAllTaskBoard(@RequestParam boolean fromNewest,
-                                                             @RequestParam(required = false) TaskType type){
-        final Iterable<Task> tasks;
-        final List<TaskDTO> taskDTOs = new ArrayList<>();
-        if (type == null) {
-            tasks = taskService.getAllTaskBoardByPostedDate(fromNewest);
-        } else {
-            tasks = taskService.getAllTaskBoardByTypeAndPostedDate(type, fromNewest);
-        }
-        tasks.forEach(task -> taskDTOs.add(mapper.taskToTaskDTO(task)));
+                                                             @RequestParam(required = false) TaskType type) {
+
+        List<Task> tasks = Optional.ofNullable(type)
+                .map(t -> taskService.getAllTaskBoardByTypeAndPostedDate(t, fromNewest))
+                .orElseGet(() -> taskService.getAllTaskBoardByPostedDate(fromNewest));
+
+
+        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
+
         return ResponseEntity.ok(taskDTOs);
     }
 
@@ -114,16 +111,14 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/taken", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<TaskDTO>> getAllTakenByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus,
-                                                                                     @RequestParam boolean expired, Authentication auth){
-        final User user = ((UserDetails) auth.getPrincipal()).getUser();
-        final Iterable<Task> tasks;
-        final List<TaskDTO> taskDTOs = new ArrayList<>();
-        if (taskStatus == null) {
-            tasks = taskService.getAllTakenByUserIdAndDeadlineStatus(user.getId(), expired);
-        } else {
-            tasks = taskService.getAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), taskStatus, expired);
-        }
-        tasks.forEach(task -> taskDTOs.add(mapper.taskToTaskDTO(task)));
+                                                                                     @RequestParam boolean expired, Authentication auth) {
+        User user = ((UserDetails) auth.getPrincipal()).getUser();
+
+        List<Task> tasks = Optional.ofNullable(taskStatus)
+                .map(t -> taskService.getAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), t, expired))
+                .orElseGet(() -> taskService.getAllTakenByUserIdAndDeadlineStatus(user.getId(), expired));
+
+        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
         return ResponseEntity.ok(taskDTOs);
     }
 
@@ -137,44 +132,36 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/posted", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Iterable<TaskDTO>> getAllPostedByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus, @RequestParam boolean expired, Authentication auth){
-        final User user = ((UserDetails) auth.getPrincipal()).getUser();
-        final Iterable<Task> tasks;
-        final List<TaskDTO> taskDTOs = new ArrayList<>();
-        if (taskStatus == null) {
-            tasks = taskService.getAllPostedByUserIdAndExpiredStatus(user.getId(), expired);
-        } else {
-            tasks = taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired);
-        }
-        tasks.forEach(task -> taskDTOs.add(mapper.taskToTaskDTO(task)));
+    public ResponseEntity<Iterable<TaskDTO>> getAllPostedByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus, @RequestParam boolean expired, Authentication auth) {
+        User user = ((UserDetails) auth.getPrincipal()).getUser();
+
+        List<Task> tasks = Optional.ofNullable(taskStatus)
+                .map(t -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), t, expired))
+                .orElseGet(() -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired));
+
+        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
         return ResponseEntity.ok(taskDTOs);
     }
 
     /**
      * Updates details of a posted task.
      *
-     * @param id            ID of the task to update.
+     * @param id             ID of the task to update.
      * @param updatedTaskDTO Updated details of the task.
      * @return ResponseEntity indicating success or failure of the update operation.
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/posted/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TaskDTO updatedTaskDTO, Authentication auth){
-        try {
-            final Task task = taskService.getById(id);
-            if (!hasAccess(task, auth))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            task.setTitle(updatedTaskDTO.getTitle());
-            task.setProblem(updatedTaskDTO.getProblem());
-            task.setDeadline(updatedTaskDTO.getDeadline());
-            task.setType(updatedTaskDTO.getType());
-            taskService.update(task);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (ValidationException e){
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TaskDTO updatedTaskDTO, Authentication auth) {
+        final Task task = taskService.getById(id);
+        if (!hasAccess(task, auth))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        task.setTitle(updatedTaskDTO.getTitle());
+        task.setProblem(updatedTaskDTO.getProblem());
+        task.setDeadline(updatedTaskDTO.getDeadline());
+        task.setType(updatedTaskDTO.getType());
+        taskService.update(task);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -185,15 +172,11 @@ public class TaskController {
      */
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @DeleteMapping(value = "/posted/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth){
-        try {
-            final Task task = taskService.getById(id);
-            if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            taskService.delete(task);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth) {
+        Task task = taskService.getById(id);
+        if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        taskService.delete(task);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -205,11 +188,11 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/posted/{id}/proposals/{proposalId}")
-    public ResponseEntity<Void> assignFreelancer(@PathVariable Integer id, @PathVariable Integer proposalId, Authentication auth){
-        final Task task = taskService.getById(id);
+    public ResponseEntity<Void> assignFreelancer(@PathVariable Integer id, @PathVariable Integer proposalId, Authentication auth) {
+        Task task = taskService.getById(id);
         if (!hasAccess(task, auth))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        final User freelancer = userService.findFreelancerByProposalId(proposalId);
+        User freelancer = userService.findFreelancerByProposalId(proposalId);
         taskService.assignFreelancer(task, freelancer);
         return ResponseEntity.noContent().build();
     }
@@ -222,8 +205,8 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/posted/{id}/accept")
-    public ResponseEntity<Void> accept(@PathVariable Integer id, Authentication auth){
-        final Task task = taskService.getById(id);
+    public ResponseEntity<Void> accept(@PathVariable Integer id, Authentication auth) {
+        Task task = taskService.getById(id);
         if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         taskService.accept(task);
         return ResponseEntity.noContent().build();
@@ -237,8 +220,8 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/{id}/remove-freelancer")
-    public ResponseEntity<Void> removeFreelancer(@PathVariable Integer id, Authentication auth){
-        final Task task = taskService.getById(id);
+    public ResponseEntity<Void> removeFreelancer(@PathVariable Integer id, Authentication auth) {
+        Task task = taskService.getById(id);
         if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         taskService.removeFreelancer(task);
         return ResponseEntity.noContent().build();
@@ -253,8 +236,7 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/taken/{id}/attach-solution")
-    public ResponseEntity<Void> attachSolution(@PathVariable Integer id, @RequestBody Solution solution){
-//        final Task task = taskService.getById(id);
+    public ResponseEntity<Void> attachSolution(@PathVariable Integer id, @RequestBody Solution solution) {
         taskService.attachSolution(id, solution);
         return ResponseEntity.noContent().build();
     }
@@ -267,7 +249,7 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/taken/{id}")
-    public ResponseEntity<Void> sendOnReview(@PathVariable Integer id){
+    public ResponseEntity<Void> sendOnReview(@PathVariable Integer id) {
         taskService.senOnReview(taskService.getById(id));
         return ResponseEntity.noContent().build();
     }
