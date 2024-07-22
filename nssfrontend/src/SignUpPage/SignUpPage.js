@@ -5,6 +5,9 @@ import './Auth.css';
 import sideImage from '../img/loginimage.jpeg';
 import { Link } from 'react-router-dom';
 
+const DEFAULT_RATING = '0';
+const DEFAULT_ROLE = 'USER';
+
 const SignUpPage = () => {
     const [formData, setFormData] = useState({
         username: '',
@@ -37,11 +40,11 @@ const SignUpPage = () => {
             lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
-            rating: "0",
-            role: "USER"
+            rating: DEFAULT_RATING,
+            role: DEFAULT_ROLE
         };
 
-        console.log('Submitting user data:', userData); // Log the data before sending
+        console.log('Submitting user data:', userData); 
 
         try {
             const response = await fetch('http://localhost:8080/rest/users', {

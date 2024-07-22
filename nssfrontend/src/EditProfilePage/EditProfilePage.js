@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+
+const authToken = Cookies.get('authToken');
+const savedUsername = Cookies.get('username');
+
 const EditProfilePage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -10,7 +14,6 @@ const EditProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUsername = Cookies.get('username');
     fetchUserIdByUsername(savedUsername);
   }, []);
 
@@ -48,7 +51,7 @@ const EditProfilePage = () => {
       email
     };
 
-    const authToken = Cookies.get('authToken');
+   
 
     try {
       const response = await axios.put(`http://localhost:8080/rest/users/${userId}`, formData, {

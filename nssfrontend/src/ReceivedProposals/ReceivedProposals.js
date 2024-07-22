@@ -23,7 +23,7 @@ const ReceivedProposals = () => {
                 });
                 const receivedProposals = proposalsResponse.data.filter(p => taskIds.includes(p.taskId));
 
-                // Fetch task titles and freelancer usernames
+        
                 const proposalsWithDetails = await Promise.all(receivedProposals.map(async (proposal) => {
                     const [taskData, freelancerData] = await Promise.all([
                         axios.get(`http://localhost:8080/rest/tasks/${proposal.taskId}`, {
@@ -41,7 +41,7 @@ const ReceivedProposals = () => {
                     };
                 }));
 
-                // Group proposals by task
+        
                 const taskProposals = taskIds.reduce((acc, taskId) => {
                     acc[taskId] = proposalsWithDetails.filter(p => p.taskId === taskId);
                     return acc;
