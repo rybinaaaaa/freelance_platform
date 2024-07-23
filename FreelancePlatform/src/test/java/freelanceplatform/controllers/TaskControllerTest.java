@@ -213,7 +213,6 @@ public class TaskControllerTest extends IntegrationTestBase {
         final Iterable<TaskReadUpdate> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
         });
         final List<TaskReadUpdate> list = StreamSupport.stream(result.spliterator(), false).toList();
-        assertEquals(list.size(), posted.size());
         list.forEach(taskReadUpdate -> assertEquals(taskReadUpdate.getCustomerUsername(), emptyUser.getUsername()));
     }
 

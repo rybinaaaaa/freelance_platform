@@ -1,10 +1,12 @@
 package freelanceplatform.data;
 
 
+import freelanceplatform.model.Proposal;
 import freelanceplatform.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -16,4 +18,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     boolean existsByEmail(String email);
 
     Optional<User> getByUsername(String username);
+
+    List<User> findAll();
 }

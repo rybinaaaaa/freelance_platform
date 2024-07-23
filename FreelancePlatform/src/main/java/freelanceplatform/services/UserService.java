@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ import static freelanceplatform.kafka.topics.UserChangesTopic.*;
 @Service
 @CacheConfig(cacheNames={"users"})
 @Slf4j
-public class UserService {
+public class UserService implements IService<User, Integer> {
     private final UserRepository userRepository;
     private final ResumeRepository resumeRepository;
     private final ProposalRepository proposalRepository;
@@ -59,12 +60,12 @@ public class UserService {
      */
     @Transactional
     @Cacheable
-    public User find(Integer id) {
+    public Optional<User> findById(Integer id) {
         Objects.requireNonNull(id);
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) throw new NotFoundException("User with id " + id + " not found");
         log.info("User with id {} has been added to cache", id);
-        return userOptional.get();
+        return userOptional;
     }
 
     /**
@@ -98,7 +99,7 @@ public class UserService {
      * @return all users
      */
     @Transactional
-    public Iterable<User> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -144,18 +145,17 @@ public class UserService {
 
     /**
      * Deletes user
-     * @param user
+     * @param id - user's id
      */
     @Transactional
-    @CacheEvict(key = "#user.id")
-    public void delete(User user){
-        Objects.requireNonNull(user);
-        if (exists(user.getId())) {
-            userRepository.delete(user);
-            userChangesProducer.sendMessage(mapper.convertUserToJson(user), UserDeleted);
-        } else {
-            throw new NotFoundException("User with id " + user.getId() + " not found");
-        }
+    @CacheEvict
+    public boolean deleteById(Integer id){
+        return userRepository.findById(id)
+                .map(user -> {
+                    userRepository.delete(user);
+                    userChangesProducer.sendMessage(mapper.convertUserToJson(user), UserDeleted);
+                    return true;
+                }).orElse(false);
     }
 
     /**

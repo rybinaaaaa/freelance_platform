@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 
 //TODO
 @Aspect
@@ -33,21 +35,25 @@ public class SecurityContextHandler {
     public void setAdminContext() {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        User user = userService.find(2);
+        Optional<User> user = userService.findById(2);
 
-        TestingAuthenticationToken token = new TestingAuthenticationToken(user, user.getPassword(), user.getRole().name());
-        context.setAuthentication(token);
-        SecurityContextHolder.setContext(context);
+        if (user.isPresent()) {
+            TestingAuthenticationToken token = new TestingAuthenticationToken(user, user.get().getPassword(), user.get().getRole().name());
+            context.setAuthentication(token);
+            SecurityContextHolder.setContext(context);
+        }
     }
 
     @Before("isUserMockedAsUser()")
     public void setUserContext() {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        User user = userService.find(1);
+        Optional<User> user = userService.findById(1);
 
-        TestingAuthenticationToken token = new TestingAuthenticationToken(user, user.getPassword(), user.getRole().name());
-        context.setAuthentication(token);
-        SecurityContextHolder.setContext(context);
+        if (user.isPresent()) {
+            TestingAuthenticationToken token = new TestingAuthenticationToken(user, user.get().getPassword(), user.get().getRole().name());
+            context.setAuthentication(token);
+            SecurityContextHolder.setContext(context);
+        }
     }
 }

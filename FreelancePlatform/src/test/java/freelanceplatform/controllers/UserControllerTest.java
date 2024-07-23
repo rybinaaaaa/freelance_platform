@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -94,7 +95,7 @@ public class UserControllerTest extends BaseControllerTest{
 
         when(authMock.getPrincipal()).thenReturn(userDetailsMock);
         when(userDetailsMock.getUser()).thenReturn(currentUser);
-        when(userServiceMock.find(1337)).thenReturn(currentUser);
+        when(userServiceMock.findById(1337)).thenReturn(Optional.of(currentUser));
 
         UserReadUpdate updatedUser = UserReadUpdate.builder()
                 .id(currentUser.getId())

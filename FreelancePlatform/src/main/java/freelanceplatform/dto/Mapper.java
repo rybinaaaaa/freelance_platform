@@ -106,7 +106,8 @@ public class Mapper {
         proposal.setId(proposalReadUpdate.getId());
         proposal.setFreelancer(
                 Optional.ofNullable(proposalReadUpdate.getFreelancerId())
-                        .map(userService::find)
+                        .map(userService::findById)
+                        .map(Optional::get)
                         .orElse(null));
         proposal.setTask(
                 Optional.ofNullable(proposalReadUpdate.getTaskId())
@@ -149,7 +150,7 @@ public class Mapper {
      */
     public Task toTask(TaskCreation taskCreation) {
         Task task = new Task(
-                Optional.ofNullable(taskCreation.getCustomerId()).map(userService::find).orElse(null),
+                Optional.ofNullable(taskCreation.getCustomerId()).map(userService::findById).map(Optional::get).orElse(null),
                 taskCreation.getTitle(),
                 taskCreation.getProblem(),
                 taskCreation.getDeadline(),
@@ -172,11 +173,13 @@ public class Mapper {
         feedback.setComment(fb.getComment());
 
         User receiver = Optional.ofNullable(fb.getReceiverId())
-                .map(userService::find)
+                .map(userService::findById)
+                .map(Optional::get)
                 .orElse(null);
 
         User sender = Optional.ofNullable(fb.getSenderId())
-                .map(userService::find)
+                .map(userService::findById)
+                .map(Optional::get)
                 .orElse(null);
 
         feedback.setReceiver(receiver);
@@ -197,11 +200,13 @@ public class Mapper {
         feedback.setComment(fb.getComment());
 
         User receiver = Optional.ofNullable(fb.getReceiverId())
-                .map(userService::find)
+                .map(userService::findById)
+                .map(Optional::get)
                 .orElse(null);
 
         User sender = Optional.ofNullable(fb.getSenderId())
-                .map(userService::find)
+                .map(userService::findById)
+                .map(Optional::get)
                 .orElse(null);
 
         feedback.setReceiver(receiver);
@@ -235,7 +240,8 @@ public class Mapper {
     public Proposal toProposal(ProposalCreation proposalCreation) {
         return new Proposal(
                 Optional.ofNullable(proposalCreation.getFreelancerId())
-                        .map(userService::find)
+                        .map(userService::findById)
+                        .map(Optional::get)
                         .orElse(null),
                 Optional.ofNullable(proposalCreation.getTaskId())
                         .map(taskService::getById)

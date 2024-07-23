@@ -57,10 +57,10 @@ public class FeedbackService implements IService<Feedback, Integer> {
     public Feedback save(Feedback feedback) {
         log.info("Saving new feedback with id {}", feedback.getId());
         Optional.ofNullable(feedback.getReceiver())
-                .flatMap(maybeReceiver -> Optional.of(userService.find(maybeReceiver.getId())))
+                .flatMap(maybeReceiver -> userService.findById(maybeReceiver.getId()))
                 .ifPresent(user -> user.addReceivedFeedback(feedback));
         Optional.ofNullable(feedback.getSender())
-                .flatMap(maybeSender -> Optional.of(userService.find(maybeSender.getId())))
+                .flatMap(maybeSender -> userService.findById(maybeSender.getId()))
                 .ifPresent(user -> user.addSentFeedback(feedback));
         return feedbackRepository.save(feedback);
     }

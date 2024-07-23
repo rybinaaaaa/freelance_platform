@@ -11,7 +11,6 @@ import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -47,8 +47,9 @@ public class UserController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserReadUpdate> getUserById(@PathVariable Integer id) {
-        final UserReadUpdate userReadUpdate = mapper.toReadUser(userService.find(id));
-        return ResponseEntity.ok(userReadUpdate);
+        return userService.findById(id)
+                .map(user -> ResponseEntity.ok(mapper.toReadUser(user)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -125,8 +126,8 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        final User userToUpdate = userService.find(id);
-        if (!user.getId().equals(userToUpdate.getId())) {
+        final User userToUpdate = userService.findById(id).orElse(null);
+        if (!user.getId().equals(Objects.requireNonNull(userToUpdate).getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         userToUpdate.setFirstName(userReadUpdateToUpdate.getFirstName());
@@ -149,13 +150,9 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteUserByAdmin(@PathVariable Integer id) {
-        return Optional.ofNullable(userService.find(id))
-                .map(user -> {
-                    userService.delete(user);
-                    final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
-                    return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
-                })
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        return userService.deleteById(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     /**
@@ -170,7 +167,7 @@ public class UserController {
     public ResponseEntity<Void> deleteAccount(Authentication auth) {
         return Optional.ofNullable(((UserDetails) auth.getPrincipal()).getUser())
                 .map(user -> {
-                    userService.delete(user);
+                    userService.deleteById(user.getId());
                     HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/");
                     return new ResponseEntity<Void>(headers, HttpStatus.NO_CONTENT);
                 })

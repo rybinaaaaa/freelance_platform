@@ -55,7 +55,7 @@ public class UserServiceTest extends IntegrationTestBase {
 
     @Test
     public void findUserThrowsExceptionIfUserNotFound() {
-        assertThrows(NotFoundException.class, () -> userService.find(10));
+        assertThrows(NotFoundException.class, () -> userService.findById(10));
     }
 
     @Test
