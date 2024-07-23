@@ -2,13 +2,13 @@ package freelanceplatform.dto.creation;
 
 import freelanceplatform.model.TaskStatus;
 import freelanceplatform.model.User;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class PostedTaskCreation {
 
     private User customer;

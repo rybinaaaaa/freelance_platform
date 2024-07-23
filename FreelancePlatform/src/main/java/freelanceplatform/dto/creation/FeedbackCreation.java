@@ -1,12 +1,14 @@
 package freelanceplatform.dto.creation;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
+@Data
+@Builder
 public class FeedbackCreation {
 
-    Integer senderId;
-    Integer receiverId;
-    Integer rating;
-    String comment;
+    private Integer senderId;
+    private Integer receiverId;
+    private Integer rating;
+    private String comment;
 }

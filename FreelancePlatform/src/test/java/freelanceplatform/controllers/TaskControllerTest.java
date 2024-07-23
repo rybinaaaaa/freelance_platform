@@ -3,6 +3,7 @@ package freelanceplatform.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import freelanceplatform.dto.Mapper;
 import freelanceplatform.dto.creation.TaskCreation;
 import freelanceplatform.dto.readUpdate.TaskReadUpdate;
 import freelanceplatform.environment.Generator;
@@ -39,6 +40,7 @@ public class TaskControllerTest extends IntegrationTestBase {
     private final ObjectMapper objectMapper;
     private final TaskService taskService;
     private final UserService userService;
+    private final Mapper mapper;
 
     private User userAdmin;
     private User emptyUser;
@@ -47,11 +49,12 @@ public class TaskControllerTest extends IntegrationTestBase {
 
 
     @Autowired
-    public TaskControllerTest(MockMvc mockMvc, ObjectMapper objectMapper, TaskService taskService, UserService userService, CacheManager cacheManager) {
+    public TaskControllerTest(MockMvc mockMvc, ObjectMapper objectMapper, TaskService taskService, UserService userService, Mapper mapper, CacheManager cacheManager) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.taskService = taskService;
         this.userService = userService;
+        this.mapper = mapper;
         this.cacheManager = cacheManager;
     }
 
@@ -74,8 +77,9 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByUserReturnsStatusCreated() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(post("/rest/tasks")
                         .with(user(new UserDetails(emptyUser)))
@@ -87,8 +91,10 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByAdminReturnsStatusCreated() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
+
         emptyUser.setRole(Role.ADMIN);
 
         mockMvc.perform(post("/rest/tasks")
@@ -101,8 +107,10 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByGuestReturnsStatusForbidden() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
+
         emptyUser.setRole(Role.GUEST);
 
         mockMvc.perform(post("/rest/tasks")
@@ -213,8 +221,9 @@ public class TaskControllerTest extends IntegrationTestBase {
     public void updateReturnsNotFoundForWrongId() throws Exception {
         Task task = taskService.getById(1);
         task.setFreelancer(userAdmin);
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(put("/rest/tasks/posted/-1")
                         .with(user(new UserDetails(emptyUser)))
@@ -230,8 +239,9 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setCustomer(emptyUser);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
                         .with(user(new UserDetails(emptyUser)))
@@ -247,8 +257,9 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setCustomer(emptyUser);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
                         .with(user(new UserDetails(emptyUser)))
@@ -263,8 +274,9 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
                         .with(user(new UserDetails(userAdmin)))
@@ -280,8 +292,9 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
-        String taskJson = objectMapper.writeValueAsString(taskDTO);
+
+        TaskCreation taskCreation = mapper.toTaskCreation(task);
+        String taskJson = objectMapper.writeValueAsString(taskCreation);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
                         .with(user(new UserDetails(emptyUser)))

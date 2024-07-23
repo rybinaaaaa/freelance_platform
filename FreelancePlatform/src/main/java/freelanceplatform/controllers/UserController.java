@@ -9,6 +9,7 @@ import freelanceplatform.model.Resume;
 import freelanceplatform.model.User;
 import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,24 +32,12 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/rest/users")
-@PreAuthorize("permitAll()")
 public class UserController {
 
     private final UserService userService;
     private final Mapper mapper;
-
-    /**
-     * Constructs the UserController with the necessary dependencies
-     *
-     * @param userService the service for managing users
-     * @param mapper      the mapper for converting between entities and DTOs
-     */
-    @Autowired
-    public UserController(UserService userService, Mapper mapper) {
-        this.userService = userService;
-        this.mapper = mapper;
-    }
 
     /**
      * Retrieves a user by their ID.

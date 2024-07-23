@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProposalReadUpdate {
+public class SolutionReadUpdate {
 
     private Integer id;
-    private Integer freelancerId;
     private Integer taskId;
+    private String link;
+    private String description;
 }

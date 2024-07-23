@@ -64,15 +64,24 @@ public class UserControllerTest extends BaseControllerTest{
     @Test
     public void registerSavesByUsingUserService() throws Exception {
         final User user = Generator.generateUser();
-        UserCreation userCreation = new UserCreation(user.getUsername(), user.getFirstName(),
-                user.getLastName(), user.getEmail(), user.getPassword());
+        UserCreation userCreation = UserCreation.builder()
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .build();
+
         User savedUser = mapper.toUser(userCreation);
+
         mockMvc.perform(post("/rest/users")
                         .content(toJson(userCreation))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
+
         verify(userServiceMock).save(savedUser);
     }
+
 
     @Test
     public void updateUserUpdatesByUsingUserService() throws Exception{
@@ -87,8 +96,15 @@ public class UserControllerTest extends BaseControllerTest{
         when(userDetailsMock.getUser()).thenReturn(currentUser);
         when(userServiceMock.find(1337)).thenReturn(currentUser);
 
-        final UserReadUpdate updatedUser = new UserReadUpdate(currentUser.getId(), "Stasiks", currentUser.getFirstName(),
-                currentUser.getLastName(), currentUser.getEmail(), currentUser.getRating(), currentUser.getRole());
+        UserReadUpdate updatedUser = UserReadUpdate.builder()
+                .id(currentUser.getId())
+                .username("Stasiks")
+                .firstName(currentUser.getFirstName())
+                .lastName(currentUser.getLastName())
+                .email(currentUser.getEmail())
+                .rating(currentUser.getRating())
+                .role(currentUser.getRole())
+                .build();
 
         mockMvc.perform(put("/rest/users/" + currentUser.getId())
                         .content(toJson(updatedUser))

@@ -2,15 +2,15 @@ package freelanceplatform.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freelanceplatform.dto.creation.FeedbackCreation;
-import freelanceplatform.dto.creation.ProposalCreation;
-import freelanceplatform.dto.creation.TaskCreation;
-import freelanceplatform.dto.creation.UserCreation;
+import freelanceplatform.dto.creation.*;
 import freelanceplatform.dto.readUpdate.*;
+import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.*;
+import freelanceplatform.services.SolutionService;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,6 +26,7 @@ public class Mapper {
     private final UserService userService;
     private final TaskService taskService;
     private final ObjectMapper objectMapper;
+    private final SolutionService solutionService;
 
     /**
      * Converts a User entity to a UserDTO.
@@ -34,14 +35,15 @@ public class Mapper {
      * @return the converted UserDTO
      */
     public UserReadUpdate toReadUser(User user) {
-        return new UserReadUpdate(
-                user.getId(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRating(),
-                user.getRole());
+        return UserReadUpdate.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .rating(user.getRating())
+                .role(user.getRole())
+                .build();
     }
 
     /**
@@ -82,14 +84,15 @@ public class Mapper {
      * @return the converted ProposalDTO
      */
     public ProposalReadUpdate toProposalReadUpdate(Proposal proposal) {
-        return new ProposalReadUpdate(
-                proposal.getId(),
-                Optional.ofNullable(proposal.getFreelancer())
+        return ProposalReadUpdate.builder()
+                .id(proposal.getId())
+                .freelancerId(Optional.ofNullable(proposal.getFreelancer())
                         .map(User::getId)
-                        .orElse(null),
-                Optional.ofNullable(proposal.getTask())
+                        .orElse(null))
+                .taskId(Optional.ofNullable(proposal.getTask())
                         .map(Task::getId)
-                        .orElse(null));
+                        .orElse(null))
+                .build();
     }
 
     /**
@@ -121,19 +124,21 @@ public class Mapper {
      * @return the converted TaskDTO
      */
     public TaskReadUpdate toTaskReadUpdate(Task task) {
-        TaskReadUpdate taskReadUpdate = new TaskReadUpdate();
-        taskReadUpdate.setId(task.getId());
-        taskReadUpdate.setCustomerUsername(task.getCustomer().getUsername());
-        if (task.getFreelancer() != null) {
-            taskReadUpdate.setFreelancerUsername(task.getFreelancer().getUsername());
-        }
-        taskReadUpdate.setTitle(task.getTitle());
-        taskReadUpdate.setProblem(task.getProblem());
-        taskReadUpdate.setDeadline(task.getDeadline());
-        taskReadUpdate.setStatus(task.getStatus());
-        taskReadUpdate.setType(task.getType());
-        taskReadUpdate.setPayment(task.getPayment());
-        return taskReadUpdate;
+        return TaskReadUpdate.builder()
+                .id(task.getId())
+                .customerUsername(Optional.ofNullable(task.getCustomer())
+                        .map(User::getUsername)
+                        .orElse(null))
+                .title(task.getTitle())
+                .problem(task.getProblem())
+                .deadline(task.getDeadline())
+                .status(task.getStatus())
+                .type(task.getType())
+                .payment(task.getPayment())
+                .freelancerUsername(Optional.ofNullable(task.getFreelancer())
+                        .map(User::getUsername)
+                        .orElse(null))
+                .build();
     }
 
     /**
@@ -144,7 +149,7 @@ public class Mapper {
      */
     public Task toTask(TaskCreation taskCreation) {
         Task task = new Task(
-                taskCreation.getCustomer(),
+                Optional.ofNullable(taskCreation.getCustomerId()).map(userService::find).orElse(null),
                 taskCreation.getTitle(),
                 taskCreation.getProblem(),
                 taskCreation.getDeadline(),
@@ -212,13 +217,13 @@ public class Mapper {
      * @return the converted FeedbackDTO
      */
     public FeedbackReadUpdate toFeedbackReadUpdate(Feedback fb) {
-        return new FeedbackReadUpdate(
-                fb.getId(),
-                fb.getSender().getId(),
-                fb.getReceiver().getId(),
-                fb.getRating(),
-                fb.getComment()
-        );
+        return FeedbackReadUpdate.builder()
+                .id(fb.getId())
+                .senderId(fb.getSender().getId())
+                .receiverId(fb.getReceiver().getId())
+                .rating(fb.getRating())
+                .comment(fb.getComment())
+                .build();
     }
 
     /**
@@ -245,9 +250,64 @@ public class Mapper {
      * @return the converted ProposalCreationDTO
      */
     public ProposalCreation toProposalCreation(Proposal proposal) {
-        return new ProposalCreation(
-                Optional.ofNullable(proposal.getFreelancer()).map(User::getId).orElse(null), // freelancer
-                Optional.ofNullable(proposal.getTask()).map(Task::getId).orElse(null) // task
-        );
+        return ProposalCreation.builder()
+                .freelancerId(Optional.ofNullable(proposal.getFreelancer()).map(User::getId).orElse(null))
+                .taskId(Optional.ofNullable(proposal.getTask()).map(Task::getId).orElse(null))
+                .build();
+    }
+
+    public Solution toSolution(SolutionCreation solutionCreation) {
+
+        Solution solution = new Solution();
+
+        solution.setTask(
+                Optional.ofNullable(taskService.getById(solutionCreation.getTaskId()))
+                        .orElseThrow(() -> new NotFoundException("Task has not found")));
+        solution.setLink(solutionCreation.getLink());
+        solution.setDescription(solutionCreation.getDescription());
+
+        return solution;
+    }
+
+    public SolutionReadUpdate toSolutionReadUpdate(Solution solution) {
+        return SolutionReadUpdate.builder()
+                .id(solution.getId())
+                .taskId(Optional.ofNullable(solution.getTask()).map(Task::getId).orElse(null))
+                .link(solution.getLink())
+                .description(solution.getDescription())
+                .build();
+    }
+
+    public SolutionCreation toSolutionCreation(Solution solution) {
+        return SolutionCreation.builder()
+                .link(solution.getLink())
+                .description(solution.getDescription())
+                .taskId(Optional.ofNullable(solution.getTask()).map(Task::getId).orElse(null))
+                .build();
+    }
+
+    public TaskCreation toTaskCreation(Task task) {
+        return TaskCreation.builder()
+                .customerId(Optional.ofNullable(task.getCustomer())
+                        .map(User::getId)
+                        .orElse(null))
+                .title(task.getTitle())
+                .problem(task.getProblem())
+                .deadline(task.getDeadline())
+                .taskStatus(task.getStatus())
+                .payment(task.getPayment())
+                .type(task.getType())
+                .build();
+    }
+
+    public Solution toSolution(SolutionReadUpdate updatedSolution, Integer id) {
+
+        return Optional.ofNullable(solutionService.getById(id))
+                .map(solution -> {
+                    solution.setDescription(updatedSolution.getDescription());
+                    solution.setLink(updatedSolution.getLink());
+                    return solution;
+                })
+                .orElseThrow(() -> new NotFoundException("Solution has not found"));
     }
 }

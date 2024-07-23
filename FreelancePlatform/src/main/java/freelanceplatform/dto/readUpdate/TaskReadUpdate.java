@@ -4,6 +4,7 @@ package freelanceplatform.dto.readUpdate;
 import freelanceplatform.model.TaskStatus;
 import freelanceplatform.model.TaskType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskReadUpdate {

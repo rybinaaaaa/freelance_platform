@@ -1,6 +1,9 @@
 package freelanceplatform.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freelanceplatform.dto.Mapper;
+import freelanceplatform.dto.creation.SolutionCreation;
+import freelanceplatform.dto.readUpdate.SolutionReadUpdate;
 import freelanceplatform.environment.Generator;
 import freelanceplatform.model.Role;
 import freelanceplatform.model.Solution;
@@ -31,17 +34,19 @@ public class SolutionControllerTests extends IntegrationTestBase {
     private final SolutionService solutionService;
     private final UserService userService;
     private final TaskService taskService;
+    private final Mapper mapper;
     private User userAdmin;
     private User emptyUser;
     private Task task;
 
     @Autowired
-    public SolutionControllerTests(MockMvc mockMvc, ObjectMapper objectMapper, SolutionService solutionService, UserService userService, TaskService taskService) {
+    public SolutionControllerTests(MockMvc mockMvc, ObjectMapper objectMapper, SolutionService solutionService, UserService userService, TaskService taskService, Mapper mapper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.solutionService = solutionService;
         this.userService = userService;
         this.taskService = taskService;
+        this.mapper = mapper;
     }
 
     @BeforeEach
@@ -59,12 +64,13 @@ public class SolutionControllerTests extends IntegrationTestBase {
         taskService.save(task);
     }
 
-    //todo resolve insertion problem
     @Test
     public void saveByUserReturnsStatusCreated() throws Exception {
         Solution solution = Generator.generateSolution();
         solution.setTask(taskService.getById(1));
-        String solutionJson = objectMapper.writeValueAsString(solution);
+
+        SolutionCreation solutionCreation = mapper.toSolutionCreation(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionCreation);
 
         mockMvc.perform(post("/rest/solutions")
                         .with(user(new UserDetails(emptyUser)))
@@ -73,11 +79,12 @@ public class SolutionControllerTests extends IntegrationTestBase {
                 .andExpect(status().isCreated());
     }
 
-    //todo resolve insertion problem
     @Test
     public void saveByAdminReturnsStatusForbidden() throws Exception {
         Solution solution = Generator.generateSolution();
-        String solutionJson = objectMapper.writeValueAsString(solution);
+        SolutionCreation solutionCreation = mapper.toSolutionCreation(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionCreation);
+
         mockMvc.perform(post("/rest/solutions")
                         .with(user(new UserDetails(userAdmin)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -85,12 +92,13 @@ public class SolutionControllerTests extends IntegrationTestBase {
                 .andExpect(status().isForbidden());
     }
 
-    //todo resolve insertion problem
     @Test
     public void saveByGuestReturnsStatusForbidden() throws Exception {
         emptyUser.setRole(Role.GUEST);
         Solution solution = Generator.generateSolution();
-        String solutionJson = objectMapper.writeValueAsString(solution);
+        SolutionCreation solutionCreation = mapper.toSolutionCreation(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionCreation);
+
         mockMvc.perform(post("/rest/solutions")
                         .with(user(new UserDetails(emptyUser)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -107,7 +115,8 @@ public class SolutionControllerTests extends IntegrationTestBase {
 
     @Test
     public void getByIdReturnsNotFoundForUnknownId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/rest/solutions/-1"))
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/rest/solutions/-1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -115,7 +124,10 @@ public class SolutionControllerTests extends IntegrationTestBase {
     public void updateReturnsNotFoundForWrongId() throws Exception {
         Solution solution = solutionService.getById(1);
         solution.setDescription("new description");
-        String solutionJson = objectMapper.writeValueAsString(solution);
+
+        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionReadUpdate);
+
         mockMvc.perform(put("/rest/solutions/-1")
                         .with(user(new UserDetails(emptyUser)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -132,7 +144,10 @@ public class SolutionControllerTests extends IntegrationTestBase {
         taskService.save(task);
         solutionService.save(solution);
         solution.setDescription("new description");
-        String solutionJson = objectMapper.writeValueAsString(solution);
+
+        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionReadUpdate);
+
         mockMvc.perform(put("/rest/solutions/1")
                         .with(user(new UserDetails(emptyUser)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -144,7 +159,10 @@ public class SolutionControllerTests extends IntegrationTestBase {
     public void updateByAdminReturnsStatusForbidden() throws Exception {
         Solution solution = solutionService.getById(1);
         solution.setDescription("new description");
-        String solutionJson = objectMapper.writeValueAsString(solution);
+
+        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionReadUpdate);
+
         mockMvc.perform(put("/rest/solutions/1")
                         .with(user(new UserDetails(userAdmin)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -157,7 +175,10 @@ public class SolutionControllerTests extends IntegrationTestBase {
         emptyUser.setRole(Role.GUEST);
         Solution solution = solutionService.getById(1);
         solution.setDescription("new description");
-        String solutionJson = objectMapper.writeValueAsString(solution);
+
+        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
+        String solutionJson = objectMapper.writeValueAsString(solutionReadUpdate);
+
         mockMvc.perform(put("/rest/solutions/1")
                         .with(user(new UserDetails(emptyUser)))
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")

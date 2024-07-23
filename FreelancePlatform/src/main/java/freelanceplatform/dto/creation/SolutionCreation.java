@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProposalCreation {
+public class SolutionCreation {
 
-    private Integer freelancerId;
     private Integer taskId;
+    private String link;
+    private String description;
 }
-

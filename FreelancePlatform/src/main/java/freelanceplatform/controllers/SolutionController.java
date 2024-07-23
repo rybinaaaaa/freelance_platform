@@ -1,9 +1,13 @@
 package freelanceplatform.controllers;
 
+import freelanceplatform.dto.Mapper;
+import freelanceplatform.dto.creation.SolutionCreation;
+import freelanceplatform.dto.readUpdate.SolutionReadUpdate;
 import freelanceplatform.model.Solution;
 import freelanceplatform.model.User;
 import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.SolutionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,15 +23,11 @@ import java.net.URI;
 @Slf4j
 @RestController
 @RequestMapping("/rest/solutions")
-@PreAuthorize("permitAll()")
+@RequiredArgsConstructor
 public class SolutionController {
 
     private final SolutionService solutionService;
-
-    @Autowired
-    public SolutionController(SolutionService solutionService) {
-        this.solutionService = solutionService;
-    }
+    private final Mapper mapper;
 
     /**
      * Saves a new solution.
@@ -37,11 +37,11 @@ public class SolutionController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> save(@RequestBody Solution solution) {
-        solutionService.save(solution);
+    public ResponseEntity<Void> save(@RequestBody SolutionCreation solution) {
+        Solution savedSolution = solutionService.save(mapper.toSolution(solution));
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(solution.getId()).toUri();
+                .buildAndExpand(savedSolution.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
 
@@ -52,8 +52,9 @@ public class SolutionController {
      * @return ResponseEntity containing the retrieved Solution object if found, or 404 if not found.
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Solution> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(solutionService.getById(id));
+    public ResponseEntity<SolutionReadUpdate> getById(@PathVariable Integer id) {
+        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solutionService.getById(id));
+        return ResponseEntity.ok(solutionReadUpdate);
     }
 
     /**
@@ -65,12 +66,11 @@ public class SolutionController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Solution updatedSolution, Authentication auth) {
-        Solution solution = solutionService.getById(id);
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody SolutionReadUpdate updatedSolution, Authentication auth) {
+        Solution solution = mapper.toSolution(updatedSolution, id);
         if (!hasAccess(solution, auth))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        solution.setLink(updatedSolution.getLink());
-        solution.setDescription(updatedSolution.getDescription());
+
         solutionService.update(solution);
         return ResponseEntity.noContent().build();
     }
