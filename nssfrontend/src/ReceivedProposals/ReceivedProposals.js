@@ -12,24 +12,24 @@ const ReceivedProposals = () => {
             setLoading(true);
             const authToken = Cookies.get('authToken');
             try {
-                const tasksResponse = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted', {
+                const tasksResponse = await axios.get('http://localhost:8080/rest/tasks/posted', {
                     headers: { 'Authorization': authToken },
                     params: { expired: false }
                 });
                 const taskIds = tasksResponse.data.map(task => task.id);
 
-                const proposalsResponse = await axios.get('https://freelance-platform-3-0-2.onrender.com/rest/proposals', {
+                const proposalsResponse = await axios.get('http://localhost:8080/rest/proposals', {
                     headers: { 'Authorization': authToken }
                 });
                 const receivedProposals = proposalsResponse.data.filter(p => taskIds.includes(p.taskId));
 
-                // Fetch task titles and freelancer usernames
+        
                 const proposalsWithDetails = await Promise.all(receivedProposals.map(async (proposal) => {
                     const [taskData, freelancerData] = await Promise.all([
-                        axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/${proposal.taskId}`, {
+                        axios.get(`http://localhost:8080/rest/tasks/${proposal.taskId}`, {
                             headers: { 'Authorization': authToken }
                         }),
-                        axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/users/${proposal.freelancerId}`, {
+                        axios.get(`http://localhost:8080/rest/users/${proposal.freelancerId}`, {
                             headers: { 'Authorization': authToken }
                         })
                     ]);
@@ -41,7 +41,7 @@ const ReceivedProposals = () => {
                     };
                 }));
 
-                // Group proposals by task
+        
                 const taskProposals = taskIds.reduce((acc, taskId) => {
                     acc[taskId] = proposalsWithDetails.filter(p => p.taskId === taskId);
                     return acc;
@@ -75,7 +75,7 @@ const ReceivedProposals = () => {
         }
 
         try {
-            const response = await axios.post(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/posted/${taskId}/proposals/${proposalId}`, {}, {
+            const response = await axios.post(`http://localhost:8080/rest/tasks/posted/${taskId}/proposals/${proposalId}`, {}, {
                 headers: {
                     'Authorization': authToken
                 }

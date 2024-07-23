@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+
+const authToken = Cookies.get('authToken');
+const savedUsername = Cookies.get('username');
+
 const EditProfilePage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -10,13 +14,12 @@ const EditProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUsername = Cookies.get('username');
     fetchUserIdByUsername(savedUsername);
   }, []);
 
   const fetchUserIdByUsername = async (username) => {
     try {
-      const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/users/username/${username}`);
+      const response = await axios.get(`http://localhost:8080/rest/users/username/${username}`);
       setUserId(response.data.id);
       setLoading(false);
       fetchUserData(response.data.id);
@@ -28,7 +31,7 @@ const EditProfilePage = () => {
 
   const fetchUserData = async (userId) => {
     try {
-      const response = await axios.get(`https://freelance-platform-3-0-2.onrender.com/rest/users/${userId}`);
+      const response = await axios.get(`http://localhost:8080/rest/users/${userId}`);
       const { firstName, lastName, email } = response.data;
       setFirstName(firstName);
       setLastName(lastName);
@@ -48,10 +51,10 @@ const EditProfilePage = () => {
       email
     };
 
-    const authToken = Cookies.get('authToken');
+   
 
     try {
-      const response = await axios.put(`https://freelance-platform-3-0-2.onrender.com/rest/users/${userId}`, formData, {
+      const response = await axios.put(`http://localhost:8080/rest/users/${userId}`, formData, {
         headers: {
           'Authorization': authToken
         }

@@ -18,7 +18,7 @@ const TaskDescription = () => {
     useEffect(() => {
         const fetchTaskAndProposals = async () => {
             try {
-                const taskResponse = await fetch(`https://freelance-platform-3-0-2.onrender.com/rest/tasks/${id}`);
+                const taskResponse = await fetch(`http://localhost:8080/rest/tasks/${id}`);
                 if (!taskResponse.ok) {
                     throw new Error('Failed to fetch the task');
                 }
@@ -26,7 +26,7 @@ const TaskDescription = () => {
                 setTask(taskData);
                 setIsOwner(taskData.customerUsername === currentUserUsername);
 
-                const proposalsResponse = await fetch(`https://freelance-platform-3-0-2.onrender.com/rest/proposals`, {
+                const proposalsResponse = await fetch(`http://localhost:8080/rest/proposals`, {
                     headers: {
                         'Authorization': authToken
                     }
@@ -58,7 +58,7 @@ const TaskDescription = () => {
         };
 
         try {
-            const response = await fetch(`https://freelance-platform-3-0-2.onrender.com/rest/proposals`, {
+            const response = await fetch(`http://localhost:8080/rest/proposals`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
