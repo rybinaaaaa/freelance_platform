@@ -2,8 +2,8 @@ package freelanceplatform.controllers;
 
 import freelanceplatform.controllers.util.RestUtils;
 import freelanceplatform.dto.Mapper;
-import freelanceplatform.dto.entityCreationDTO.UserCreationDTO;
-import freelanceplatform.dto.entityDTO.UserDTO;
+import freelanceplatform.dto.creation.UserCreation;
+import freelanceplatform.dto.readUpdate.UserReadUpdate;
 import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Resume;
 import freelanceplatform.model.User;
@@ -57,9 +57,9 @@ public class UserController {
      * @return the ResponseEntity with the user data or 404 if not found
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
-        final UserDTO userDTO = mapper.userToDTO(userService.find(id));
-        return ResponseEntity.ok(userDTO);
+    public ResponseEntity<UserReadUpdate> getUserById(@PathVariable Integer id) {
+        final UserReadUpdate userReadUpdate = mapper.toReadUser(userService.find(id));
+        return ResponseEntity.ok(userReadUpdate);
     }
 
     /**
@@ -69,9 +69,9 @@ public class UserController {
      * @return the ResponseEntity with the user data or 404 if not found
      */
     @GetMapping(value = "/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getUserByUserName(@PathVariable String username) {
-        final UserDTO userDTO = mapper.userToDTO(userService.findByUsername(username));
-        return ResponseEntity.ok(userDTO);
+    public ResponseEntity<UserReadUpdate> getUserByUserName(@PathVariable String username) {
+        final UserReadUpdate userReadUpdate = mapper.toReadUser(userService.findByUsername(username));
+        return ResponseEntity.ok(userReadUpdate);
     }
 
     /**
@@ -80,26 +80,26 @@ public class UserController {
      * @return an iterable of all user DTOs
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<UserDTO> getAllUsers() {
+    public Iterable<UserReadUpdate> getAllUsers() {
         Iterable<User> users = userService.findAll();
 
-        List<UserDTO> userDTOs = new ArrayList<>();
+        List<UserReadUpdate> userReadUpdates = new ArrayList<>();
         for (User user : users) {
-            userDTOs.add(mapper.userToDTO(user));
+            userReadUpdates.add(mapper.toReadUser(user));
         }
 
-        return userDTOs;
+        return userReadUpdates;
     }
 
     /**
      * Signs up a new user.
      *
-     * @param userCreationDTO the user creation data transfer object
+     * @param userCreation the user creation data transfer object
      * @return the ResponseEntity indicating the result of the operation
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> signUp(@RequestBody UserCreationDTO userCreationDTO) {
-        User user = mapper.userDTOToUser(userCreationDTO);
+    public ResponseEntity<Void> signUp(@RequestBody UserCreation userCreation) {
+        User user = mapper.toUser(userCreation);
         userService.save(user);
         final HttpHeaders headers = RestUtils.createLocationHeaderFromCurrentUri("/current");
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
@@ -113,26 +113,26 @@ public class UserController {
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_GUEST')")
     @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getCurrent(Authentication auth) {
+    public UserReadUpdate getCurrent(Authentication auth) {
         assert auth.getPrincipal() instanceof UserDetails;
-        return mapper.userToDTO(((UserDetails) auth.getPrincipal()).getUser());
+        return mapper.toReadUser(((UserDetails) auth.getPrincipal()).getUser());
     }
 
     /**
      * Updates a user's information.
      *
      * @param id              the ID of the user to update
-     * @param userDTOToUpdate the user data to update
+     * @param userReadUpdateToUpdate the user data to update
      * @param auth            the authentication object
      * @return the ResponseEntity indicating the result of the operation
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable Integer id,
-                                           @RequestBody UserDTO userDTOToUpdate, Authentication auth) {
+                                           @RequestBody UserReadUpdate userReadUpdateToUpdate, Authentication auth) {
         final User user = ((UserDetails) auth.getPrincipal()).getUser();
 
-        if (!id.equals(userDTOToUpdate.getId())) {
+        if (!id.equals(userReadUpdateToUpdate.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -140,9 +140,9 @@ public class UserController {
         if (!user.getId().equals(userToUpdate.getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        userToUpdate.setFirstName(userDTOToUpdate.getFirstName());
-        userToUpdate.setLastName(userDTOToUpdate.getLastName());
-        userToUpdate.setEmail(userDTOToUpdate.getEmail());
+        userToUpdate.setFirstName(userReadUpdateToUpdate.getFirstName());
+        userToUpdate.setLastName(userReadUpdateToUpdate.getLastName());
+        userToUpdate.setEmail(userReadUpdateToUpdate.getEmail());
 
         userService.update(userToUpdate);
 

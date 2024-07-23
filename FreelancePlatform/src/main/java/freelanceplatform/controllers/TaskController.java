@@ -2,8 +2,8 @@ package freelanceplatform.controllers;
 
 
 import freelanceplatform.dto.Mapper;
-import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
-import freelanceplatform.dto.entityDTO.TaskDTO;
+import freelanceplatform.dto.creation.TaskCreation;
+import freelanceplatform.dto.readUpdate.TaskReadUpdate;
 import freelanceplatform.model.*;
 import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.TaskService;
@@ -49,9 +49,9 @@ public class TaskController {
      */
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> save(@RequestBody TaskCreationDTO taskDTO, Authentication auth) {
+    public ResponseEntity<Void> save(@RequestBody TaskCreation taskDTO, Authentication auth) {
         final User user = ((UserDetails) auth.getPrincipal()).getUser();
-        final Task task = mapper.taskDTOToTask(taskDTO);
+        final Task task = mapper.toTask(taskDTO);
         task.setCustomer(user);
         taskService.save(task);
         URI location = ServletUriComponentsBuilder
@@ -67,9 +67,9 @@ public class TaskController {
      * @return ResponseEntity with the task data or 404 if not found
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskDTO> getById(@PathVariable Integer id) {
-        final TaskDTO taskDTO = mapper.taskToTaskDTO(taskService.getById(id));
-        return ResponseEntity.ok(taskDTO);
+    public ResponseEntity<TaskReadUpdate> getById(@PathVariable Integer id) {
+        final TaskReadUpdate taskReadUpdate = mapper.toTaskReadUpdate(taskService.getById(id));
+        return ResponseEntity.ok(taskReadUpdate);
     }
 
     /**
@@ -80,17 +80,17 @@ public class TaskController {
      * @return ResponseEntity containing a list of TaskDTOs.
      */
     @GetMapping(value = "/taskBoard", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Iterable<TaskDTO>> getAllTaskBoard(@RequestParam boolean fromNewest,
-                                                             @RequestParam(required = false) TaskType type) {
+    public ResponseEntity<Iterable<TaskReadUpdate>> getAllTaskBoard(@RequestParam boolean fromNewest,
+                                                                    @RequestParam(required = false) TaskType type) {
 
         List<Task> tasks = Optional.ofNullable(type)
                 .map(t -> taskService.getAllTaskBoardByTypeAndPostedDate(t, fromNewest))
                 .orElseGet(() -> taskService.getAllTaskBoardByPostedDate(fromNewest));
 
 
-        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
+        List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
 
-        return ResponseEntity.ok(taskDTOs);
+        return ResponseEntity.ok(taskReadUpdates);
     }
 
     /**
@@ -103,16 +103,16 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/taken", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Iterable<TaskDTO>> getAllTakenByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus,
-                                                                                     @RequestParam boolean expired, Authentication auth) {
+    public ResponseEntity<Iterable<TaskReadUpdate>> getAllTakenByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus,
+                                                                                            @RequestParam boolean expired, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
 
         List<Task> tasks = Optional.ofNullable(taskStatus)
                 .map(t -> taskService.getAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), t, expired))
                 .orElseGet(() -> taskService.getAllTakenByUserIdAndDeadlineStatus(user.getId(), expired));
 
-        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
-        return ResponseEntity.ok(taskDTOs);
+        List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
+        return ResponseEntity.ok(taskReadUpdates);
     }
 
     /**
@@ -125,34 +125,34 @@ public class TaskController {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(value = "/posted", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Iterable<TaskDTO>> getAllPostedByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus, @RequestParam boolean expired, Authentication auth) {
+    public ResponseEntity<Iterable<TaskReadUpdate>> getAllPostedByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus, @RequestParam boolean expired, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
 
         List<Task> tasks = Optional.ofNullable(taskStatus)
                 .map(t -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), t, expired))
                 .orElseGet(() -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired));
 
-        List<TaskDTO> taskDTOs = tasks.stream().map(mapper::taskToTaskDTO).toList();
-        return ResponseEntity.ok(taskDTOs);
+        List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
+        return ResponseEntity.ok(taskReadUpdates);
     }
 
     /**
      * Updates details of a posted task.
      *
      * @param id             ID of the task to update.
-     * @param updatedTaskDTO Updated details of the task.
+     * @param updatedTaskReadUpdate Updated details of the task.
      * @return ResponseEntity indicating success or failure of the update operation.
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/posted/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TaskDTO updatedTaskDTO, Authentication auth) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TaskReadUpdate updatedTaskReadUpdate, Authentication auth) {
         final Task task = taskService.getById(id);
         if (!hasAccess(task, auth))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        task.setTitle(updatedTaskDTO.getTitle());
-        task.setProblem(updatedTaskDTO.getProblem());
-        task.setDeadline(updatedTaskDTO.getDeadline());
-        task.setType(updatedTaskDTO.getType());
+        task.setTitle(updatedTaskReadUpdate.getTitle());
+        task.setProblem(updatedTaskReadUpdate.getProblem());
+        task.setDeadline(updatedTaskReadUpdate.getDeadline());
+        task.setType(updatedTaskReadUpdate.getType());
         taskService.update(task);
         return ResponseEntity.noContent().build();
     }

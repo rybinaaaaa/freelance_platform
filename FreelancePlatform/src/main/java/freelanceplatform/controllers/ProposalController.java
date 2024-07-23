@@ -1,8 +1,8 @@
 package freelanceplatform.controllers;
 
 import freelanceplatform.dto.Mapper;
-import freelanceplatform.dto.entityCreationDTO.ProposalCreationDTO;
-import freelanceplatform.dto.entityDTO.ProposalDTO;
+import freelanceplatform.dto.creation.ProposalCreation;
+import freelanceplatform.dto.readUpdate.ProposalReadUpdate;
 import freelanceplatform.model.Proposal;
 import freelanceplatform.model.User;
 import freelanceplatform.model.security.UserDetails;
@@ -44,9 +44,9 @@ public class ProposalController {
      * @return the proposal DTO
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ProposalDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<ProposalReadUpdate> findById(@PathVariable Integer id) {
         return proposalService.findById(id)
-                .map(pr -> ResponseEntity.ok(mapper.proposalToProposalDTO(pr)))
+                .map(pr -> ResponseEntity.ok(mapper.toProposalReadUpdate(pr)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -56,28 +56,28 @@ public class ProposalController {
      * @return a list of all proposal DTOs
      */
     @GetMapping()
-    public ResponseEntity<List<ProposalDTO>> findAll() {
+    public ResponseEntity<List<ProposalReadUpdate>> findAll() {
         return ResponseEntity.ok(proposalService.findAll().stream()
-                .map(mapper::proposalToProposalDTO).toList());
+                .map(mapper::toProposalReadUpdate).toList());
     }
 
     /**
      * Updates an existing proposal.
      *
      * @param id          the ID of the proposal to update
-     * @param proposalDTO the proposal DTO with updated information
+     * @param proposalReadUpdate the proposal DTO with updated information
      * @param auth        the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody ProposalDTO proposalDTO, Authentication auth) {
-        Objects.requireNonNull(proposalDTO);
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody ProposalReadUpdate proposalReadUpdate, Authentication auth) {
+        Objects.requireNonNull(proposalReadUpdate);
 
-        if (!proposalDTO.getId().equals(id)) return BAD_REQUEST;
-        if (!hasUserAccess(proposalDTO, auth)) return FORBIDDEN1;
+        if (!proposalReadUpdate.getId().equals(id)) return BAD_REQUEST;
+        if (!hasUserAccess(proposalReadUpdate, auth)) return FORBIDDEN1;
 
-        Proposal newPr = mapper.proposalDTOToProposal(proposalDTO);
+        Proposal newPr = mapper.toProposal(proposalReadUpdate);
 
         proposalService.update(newPr);
         return ResponseEntity.noContent().build();
@@ -86,18 +86,18 @@ public class ProposalController {
     /**
      * Saves a new proposal.
      *
-     * @param proposalCreationDTO the proposal DTO to save
+     * @param proposalCreation the proposal DTO to save
      * @param auth                the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PostMapping()
-    public ResponseEntity<Void> save(@RequestBody ProposalCreationDTO proposalCreationDTO, Authentication auth) {
-        Objects.requireNonNull(proposalCreationDTO);
+    public ResponseEntity<Void> save(@RequestBody ProposalCreation proposalCreation, Authentication auth) {
+        Objects.requireNonNull(proposalCreation);
 
-        if (!hasUserAccess(proposalCreationDTO, auth)) return FORBIDDEN1;
+        if (!hasUserAccess(proposalCreation, auth)) return FORBIDDEN1;
 
-        Proposal newPr = mapper.proposalCreationDTOToProposal(proposalCreationDTO);
+        Proposal newPr = mapper.toProposal(proposalCreation);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -122,24 +122,24 @@ public class ProposalController {
     /**
      * Checks if the authenticated user has access to the proposal.
      *
-     * @param proposalDTO the proposal DTO
+     * @param proposalReadUpdate the proposal DTO
      * @param auth        the authentication object
      * @return true if the user has access, false otherwise
      */
-    private static Boolean hasUserAccess(ProposalDTO proposalDTO, Authentication auth) {
+    private static Boolean hasUserAccess(ProposalReadUpdate proposalReadUpdate, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
-        return user.isAdmin() || user.getId().equals(proposalDTO.getFreelancerId());
+        return user.isAdmin() || user.getId().equals(proposalReadUpdate.getFreelancerId());
     }
 
     /**
      * Checks if the authenticated user has access to the proposal.
      *
-     * @param proposalCreationDTO the proposal DTO
+     * @param proposalCreation the proposal DTO
      * @param auth                the authentication object
      * @return true if the user has access, false otherwise
      */
-    private static Boolean hasUserAccess(ProposalCreationDTO proposalCreationDTO, Authentication auth) {
+    private static Boolean hasUserAccess(ProposalCreation proposalCreation, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
-        return user.isAdmin() || user.getId().equals(proposalCreationDTO.getFreelancerId());
+        return user.isAdmin() || user.getId().equals(proposalCreation.getFreelancerId());
     }
 }

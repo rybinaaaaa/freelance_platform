@@ -1,4 +1,4 @@
-package freelanceplatform.dto.entityCreationDTO;
+package freelanceplatform.dto.creation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreationDTO {
+public class UserCreation {
 
     private  String username;
     private  String firstName;

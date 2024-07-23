@@ -3,8 +3,8 @@ package freelanceplatform.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
-import freelanceplatform.dto.entityDTO.TaskDTO;
+import freelanceplatform.dto.creation.TaskCreation;
+import freelanceplatform.dto.readUpdate.TaskReadUpdate;
 import freelanceplatform.environment.Generator;
 import freelanceplatform.model.*;
 import freelanceplatform.model.security.UserDetails;
@@ -74,7 +74,7 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByUserReturnsStatusCreated() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(post("/rest/tasks")
@@ -87,7 +87,7 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByAdminReturnsStatusCreated() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
         emptyUser.setRole(Role.ADMIN);
 
@@ -101,7 +101,7 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void saveByGuestReturnsStatusForbidden() throws Exception {
         Task task = Generator.generateTask();
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
         emptyUser.setRole(Role.GUEST);
 
@@ -151,13 +151,13 @@ public class TaskControllerTest extends IntegrationTestBase {
         String jsonContent = mvcResult.getResponse().getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        final Iterable<TaskDTO> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
+        final Iterable<TaskReadUpdate> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
         });
-        final List<TaskDTO> list = StreamSupport.stream(result.spliterator(), false)
+        final List<TaskReadUpdate> list = StreamSupport.stream(result.spliterator(), false)
                 .toList();
 
         assertEquals(list.size(), taskBoardTasks.size());
-        list.forEach(taskDTO -> assertEquals(taskDTO.getStatus(), TaskStatus.UNASSIGNED));
+        list.forEach(taskReadUpdate -> assertEquals(taskReadUpdate.getStatus(), TaskStatus.UNASSIGNED));
     }
 
     @Test
@@ -178,11 +178,11 @@ public class TaskControllerTest extends IntegrationTestBase {
         String jsonContent = mvcResult.getResponse().getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        final Iterable<TaskDTO> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
+        final Iterable<TaskReadUpdate> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
         });
-        final List<TaskDTO> list = StreamSupport.stream(result.spliterator(), false).toList();
+        final List<TaskReadUpdate> list = StreamSupport.stream(result.spliterator(), false).toList();
         assertEquals(list.size(), taken.size());
-        list.forEach(taskDTO -> assertEquals(taskDTO.getFreelancerUsername(), emptyUser.getUsername()));
+        list.forEach(taskReadUpdate -> assertEquals(taskReadUpdate.getFreelancerUsername(), emptyUser.getUsername()));
     }
 
     @Test
@@ -202,18 +202,18 @@ public class TaskControllerTest extends IntegrationTestBase {
         String jsonContent = mvcResult.getResponse().getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        final Iterable<TaskDTO> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
+        final Iterable<TaskReadUpdate> result = objectMapper.readValue(jsonContent, new TypeReference<>() {
         });
-        final List<TaskDTO> list = StreamSupport.stream(result.spliterator(), false).toList();
+        final List<TaskReadUpdate> list = StreamSupport.stream(result.spliterator(), false).toList();
         assertEquals(list.size(), posted.size());
-        list.forEach(taskDTO -> assertEquals(taskDTO.getCustomerUsername(), emptyUser.getUsername()));
+        list.forEach(taskReadUpdate -> assertEquals(taskReadUpdate.getCustomerUsername(), emptyUser.getUsername()));
     }
 
     @Test
     public void updateReturnsNotFoundForWrongId() throws Exception {
         Task task = taskService.getById(1);
         task.setFreelancer(userAdmin);
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(put("/rest/tasks/posted/-1")
@@ -230,7 +230,7 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setCustomer(emptyUser);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
@@ -247,7 +247,7 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setCustomer(emptyUser);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
@@ -263,7 +263,7 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(put("/rest/tasks/posted/1")
@@ -280,7 +280,7 @@ public class TaskControllerTest extends IntegrationTestBase {
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
-        TaskCreationDTO taskDTO = new TaskCreationDTO(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
+        TaskCreation taskDTO = new TaskCreation(task.getCustomer(), task.getTitle(), task.getProblem(), task.getDeadline(), task.getStatus(), task.getPayment(), task.getType());
         String taskJson = objectMapper.writeValueAsString(taskDTO);
 
         mockMvc.perform(put("/rest/tasks/posted/1")

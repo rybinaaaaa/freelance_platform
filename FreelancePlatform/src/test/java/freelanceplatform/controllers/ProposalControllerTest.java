@@ -87,7 +87,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         proposal.setFreelancer(emptyUser);
 
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalReadUpdate(proposal));
 
         mockMvc.perform(put("/rest/proposals/1")
                         .with(user(new UserDetails(userAdmin)))
@@ -102,7 +102,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         proposal.setFreelancer(userAdmin);
 
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalReadUpdate(proposal));
 
         mockMvc.perform(put("/rest/proposals/1")
                         .with(user(new UserDetails(emptyUser)))
@@ -117,7 +117,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         proposal.setFreelancer(emptyUser);
 
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalReadUpdate(proposal));
 
         mockMvc.perform(put("/rest/proposals/1")
                         .with(user(new UserDetails(proposal.getFreelancer())))
@@ -131,7 +131,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         Proposal proposal = Generator.generateProposal();
         userService.save(proposal.getFreelancer());
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalReadUpdate(proposal));
 
         mockMvc.perform(post("/rest/proposals")
                         .with(user(new UserDetails(emptyUser)))
@@ -146,7 +146,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         userService.save(proposal.getFreelancer());
         taskService.save(proposal.getTask());
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalCreationDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalCreation(proposal));
 
         mockMvc.perform(post("/rest/proposals")
                         .with(user(new UserDetails(proposal.getFreelancer())))
@@ -161,7 +161,7 @@ public class ProposalControllerTest extends IntegrationTestBase {
         userService.save(proposal.getFreelancer());
         taskService.save(proposal.getTask());
 
-        String pr = objectMapper.writeValueAsString(mapper.proposalToProposalCreationDTO(proposal));
+        String pr = objectMapper.writeValueAsString(mapper.toProposalCreation(proposal));
 
         mockMvc.perform(post("/rest/proposals")
                         .with(user(new UserDetails(userAdmin)))

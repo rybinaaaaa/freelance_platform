@@ -1,8 +1,8 @@
 package freelanceplatform.controllers;
 
 import freelanceplatform.dto.Mapper;
-import freelanceplatform.dto.entityCreationDTO.FeedbackCreationDTO;
-import freelanceplatform.dto.entityDTO.FeedbackDTO;
+import freelanceplatform.dto.creation.FeedbackCreation;
+import freelanceplatform.dto.readUpdate.FeedbackReadUpdate;
 import freelanceplatform.model.Feedback;
 import freelanceplatform.model.User;
 import freelanceplatform.model.security.UserDetails;
@@ -44,10 +44,10 @@ public class FeedbackController {
      * @return the feedback DTO
      */
     @GetMapping("/{id}")
-    public ResponseEntity<FeedbackDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<FeedbackReadUpdate> findById(@PathVariable Integer id) {
         return feedbackService.findById(id)
                 .map(fb -> ResponseEntity
-                        .ok(mapper.feedbackToFeedbackDto(fb)))
+                        .ok(mapper.toFeedbackReadUpdate(fb)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -57,28 +57,28 @@ public class FeedbackController {
      * @return a list of all feedback DTOs
      */
     @GetMapping()
-    public ResponseEntity<List<FeedbackDTO>> findAll() {
+    public ResponseEntity<List<FeedbackReadUpdate>> findAll() {
         return ResponseEntity.ok(feedbackService.findAll().stream()
-                .map(mapper::feedbackToFeedbackDto).toList());
+                .map(mapper::toFeedbackReadUpdate).toList());
     }
 
     /**
      * Updates an existing feedback.
      *
      * @param id          the ID of the feedback to update
-     * @param feedbackDTO the feedback DTO with updated information
+     * @param feedbackReadUpdate the feedback DTO with updated information
      * @param auth        the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody FeedbackDTO feedbackDTO, Authentication auth) {
-        Objects.requireNonNull(feedbackDTO);
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody FeedbackReadUpdate feedbackReadUpdate, Authentication auth) {
+        Objects.requireNonNull(feedbackReadUpdate);
 
-        if (!feedbackDTO.getId().equals(id)) return BAD_REQUEST;
-        if (!hasUserAccess(feedbackDTO, auth)) return FORBIDDEN1;
+        if (!feedbackReadUpdate.getId().equals(id)) return BAD_REQUEST;
+        if (!hasUserAccess(feedbackReadUpdate, auth)) return FORBIDDEN1;
 
-        Feedback newFb = mapper.feedbackDtoToFeedback(feedbackDTO);
+        Feedback newFb = mapper.toFeedback(feedbackReadUpdate);
         feedbackService.update(newFb);
         return ResponseEntity.noContent().build();
     }
@@ -86,17 +86,17 @@ public class FeedbackController {
     /**
      * Saves a new feedback.
      *
-     * @param feedbackCreationDTO the feedback DTO to save
+     * @param feedbackCreation the feedback DTO to save
      * @param auth                the authentication object
      * @return a response entity indicating the outcome
      */
     @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PostMapping()
-    public ResponseEntity<Void> save(@RequestBody FeedbackCreationDTO feedbackCreationDTO, Authentication auth) {
-        Objects.requireNonNull(feedbackCreationDTO);
-        if (!hasUserAccess(feedbackCreationDTO, auth)) return FORBIDDEN1;
+    public ResponseEntity<Void> save(@RequestBody FeedbackCreation feedbackCreation, Authentication auth) {
+        Objects.requireNonNull(feedbackCreation);
+        if (!hasUserAccess(feedbackCreation, auth)) return FORBIDDEN1;
 
-        Feedback newFb = mapper.feedbackCreationDtoToFeedback(feedbackCreationDTO);
+        Feedback newFb = mapper.toFeedback(feedbackCreation);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -122,24 +122,24 @@ public class FeedbackController {
     /**
      * Checks if the authenticated user has access to the feedback.
      *
-     * @param feedbackDTO the feedback DTO
+     * @param feedbackReadUpdate the feedback DTO
      * @param auth        the authentication object
      * @return true if the user has access, false otherwise
      */
-    private static Boolean hasUserAccess(FeedbackDTO feedbackDTO, Authentication auth) {
+    private static Boolean hasUserAccess(FeedbackReadUpdate feedbackReadUpdate, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
-        return user.isAdmin() || user.getId().equals(feedbackDTO.getSenderId());
+        return user.isAdmin() || user.getId().equals(feedbackReadUpdate.getSenderId());
     }
 
     /**
      * Checks if the authenticated user has access to the feedback.
      *
-     * @param feedbackCreationDTO the feedbackCreation DTO
+     * @param feedbackCreation the feedbackCreation DTO
      * @param auth                the authentication object
      * @return true if the user has access, false otherwise
      */
-    private static Boolean hasUserAccess(FeedbackCreationDTO feedbackCreationDTO, Authentication auth) {
+    private static Boolean hasUserAccess(FeedbackCreation feedbackCreation, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
-        return user.isAdmin() || user.getId().equals(feedbackCreationDTO.getSenderId());
+        return user.isAdmin() || user.getId().equals(feedbackCreation.getSenderId());
     }
 }

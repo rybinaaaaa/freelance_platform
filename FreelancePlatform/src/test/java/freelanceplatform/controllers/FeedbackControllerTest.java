@@ -84,7 +84,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         feedback.setComment(comment);
 
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(put("/rest/feedbacks/1")
                         .with(user(new UserDetails(feedback.getSender())))
@@ -102,7 +102,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         feedback.setComment(comment);
 
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(put("/rest/feedbacks/1")
                         .with(user(new UserDetails(feedback.getSender())))
@@ -119,7 +119,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         feedback.setComment("test");
 
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(put("/rest/feedbacks/1")
                         .with(user(new UserDetails(emptyUser)))
@@ -134,7 +134,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         userService.save(feedback.getSender());
         userService.save(feedback.getReceiver());
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(post("/rest/feedbacks")
                         .with(user(new UserDetails(emptyUser)))
@@ -149,7 +149,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         userService.save(feedback.getSender());
         userService.save(feedback.getReceiver());
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(post("/rest/feedbacks")
                         .with(user(new UserDetails(feedback.getSender())))
@@ -164,7 +164,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
         userService.save(feedback.getSender());
         userService.save(feedback.getReceiver());
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(post("/rest/feedbacks")
                         .with(user(new UserDetails(userAdmin)))
@@ -177,7 +177,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
     void deleteByAdminReturnsStatusNoContent() throws Exception {
         Feedback feedback = feedbackService.findById(1).orElseThrow(() -> new NotFoundException("Incorrect id in tests!"));        feedback.setComment("test");
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(delete("/rest/feedbacks/1")
                         .with(user(new UserDetails(userAdmin)))
@@ -190,7 +190,7 @@ class FeedbackControllerTest extends IntegrationTestBase {
     void deleteByUserReturnsStatusForbidden() throws Exception {
         Feedback feedback = feedbackService.findById(1).orElseThrow(() -> new NotFoundException("Incorrect id in tests!"));
 
-        String fb = objectMapper.writeValueAsString(mapper.feedbackToFeedbackDto(feedback));
+        String fb = objectMapper.writeValueAsString(mapper.toFeedbackReadUpdate(feedback));
 
         mockMvc.perform(delete("/rest/feedbacks/1")
                         .with(user(new UserDetails(emptyUser)))

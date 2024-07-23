@@ -2,8 +2,8 @@ package freelanceplatform.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import freelanceplatform.dto.Mapper;
-import freelanceplatform.dto.entityCreationDTO.UserCreationDTO;
-import freelanceplatform.dto.entityDTO.UserDTO;
+import freelanceplatform.dto.creation.UserCreation;
+import freelanceplatform.dto.readUpdate.UserReadUpdate;
 import freelanceplatform.environment.Generator;
 import freelanceplatform.model.User;
 import freelanceplatform.model.security.UserDetails;
@@ -54,7 +54,7 @@ public class UserControllerTest extends BaseControllerTest{
         }
         when(userServiceMock.findAll()).thenReturn(users);
         final MvcResult mvcResult = mockMvc.perform(get("/rest/users")).andReturn();
-        final List<UserDTO> result = readValue(mvcResult, new TypeReference<>() {
+        final List<UserReadUpdate> result = readValue(mvcResult, new TypeReference<>() {
         });
         assertNotNull(result);
         assertEquals(result.size(), users.size());
@@ -64,11 +64,11 @@ public class UserControllerTest extends BaseControllerTest{
     @Test
     public void registerSavesByUsingUserService() throws Exception {
         final User user = Generator.generateUser();
-        UserCreationDTO userCreationDTO = new UserCreationDTO(user.getUsername(), user.getFirstName(),
+        UserCreation userCreation = new UserCreation(user.getUsername(), user.getFirstName(),
                 user.getLastName(), user.getEmail(), user.getPassword());
-        User savedUser = mapper.userDTOToUser(userCreationDTO);
+        User savedUser = mapper.toUser(userCreation);
         mockMvc.perform(post("/rest/users")
-                        .content(toJson(userCreationDTO))
+                        .content(toJson(userCreation))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
         verify(userServiceMock).save(savedUser);
@@ -87,7 +87,7 @@ public class UserControllerTest extends BaseControllerTest{
         when(userDetailsMock.getUser()).thenReturn(currentUser);
         when(userServiceMock.find(1337)).thenReturn(currentUser);
 
-        final UserDTO updatedUser = new UserDTO(currentUser.getId(), "Stasiks", currentUser.getFirstName(),
+        final UserReadUpdate updatedUser = new UserReadUpdate(currentUser.getId(), "Stasiks", currentUser.getFirstName(),
                 currentUser.getLastName(), currentUser.getEmail(), currentUser.getRating(), currentUser.getRole());
 
         mockMvc.perform(put("/rest/users/" + currentUser.getId())

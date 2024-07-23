@@ -2,11 +2,11 @@ package freelanceplatform.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freelanceplatform.dto.entityCreationDTO.FeedbackCreationDTO;
-import freelanceplatform.dto.entityCreationDTO.ProposalCreationDTO;
-import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
-import freelanceplatform.dto.entityCreationDTO.UserCreationDTO;
-import freelanceplatform.dto.entityDTO.*;
+import freelanceplatform.dto.creation.FeedbackCreation;
+import freelanceplatform.dto.creation.ProposalCreation;
+import freelanceplatform.dto.creation.TaskCreation;
+import freelanceplatform.dto.creation.UserCreation;
+import freelanceplatform.dto.readUpdate.*;
 import freelanceplatform.model.*;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
@@ -33,8 +33,8 @@ public class Mapper {
      * @param user the User entity to convert
      * @return the converted UserDTO
      */
-    public UserDTO userToDTO(User user) {
-        return new UserDTO(
+    public UserReadUpdate toReadUser(User user) {
+        return new UserReadUpdate(
                 user.getId(),
                 user.getUsername(),
                 user.getFirstName(),
@@ -47,16 +47,16 @@ public class Mapper {
     /**
      * Converts a UserCreationDTO to a User entity.
      *
-     * @param userDTO the UserCreationDTO to convert
+     * @param userCreation the UserCreationDTO to convert
      * @return the converted User entity
      */
-    public User userDTOToUser(UserCreationDTO userDTO) {
+    public User toUser(UserCreation userCreation) {
         return User.builder()
-                .username(userDTO.getUsername())
-                .firstName(userDTO.getFirstName())
-                .lastName(userDTO.getLastName())
-                .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .username(userCreation.getUsername())
+                .firstName(userCreation.getFirstName())
+                .lastName(userCreation.getLastName())
+                .email(userCreation.getEmail())
+                .password(userCreation.getPassword())
                 .role(Role.USER)
                 .build();
     }
@@ -81,8 +81,8 @@ public class Mapper {
      * @param proposal the Proposal entity to convert
      * @return the converted ProposalDTO
      */
-    public ProposalDTO proposalToProposalDTO(Proposal proposal) {
-        return new ProposalDTO(
+    public ProposalReadUpdate toProposalReadUpdate(Proposal proposal) {
+        return new ProposalReadUpdate(
                 proposal.getId(),
                 Optional.ofNullable(proposal.getFreelancer())
                         .map(User::getId)
@@ -95,18 +95,18 @@ public class Mapper {
     /**
      * Converts a ProposalDTO to a Proposal entity.
      *
-     * @param proposalDTO the ProposalDTO to convert
+     * @param proposalReadUpdate the ProposalDTO to convert
      * @return the converted Proposal entity
      */
-    public Proposal proposalDTOToProposal(ProposalDTO proposalDTO) {
+    public Proposal toProposal(ProposalReadUpdate proposalReadUpdate) {
         Proposal proposal = new Proposal();
-        proposal.setId(proposalDTO.getId());
+        proposal.setId(proposalReadUpdate.getId());
         proposal.setFreelancer(
-                Optional.ofNullable(proposalDTO.getFreelancerId())
+                Optional.ofNullable(proposalReadUpdate.getFreelancerId())
                         .map(userService::find)
                         .orElse(null));
         proposal.setTask(
-                Optional.ofNullable(proposalDTO.getTaskId())
+                Optional.ofNullable(proposalReadUpdate.getTaskId())
                         .map(taskService::getById)
                         .orElse(null)
         );
@@ -120,37 +120,37 @@ public class Mapper {
      * @param task the Task entity to convert
      * @return the converted TaskDTO
      */
-    public TaskDTO taskToTaskDTO(Task task) {
-        TaskDTO taskDTO = new TaskDTO();
-        taskDTO.setId(task.getId());
-        taskDTO.setCustomerUsername(task.getCustomer().getUsername());
+    public TaskReadUpdate toTaskReadUpdate(Task task) {
+        TaskReadUpdate taskReadUpdate = new TaskReadUpdate();
+        taskReadUpdate.setId(task.getId());
+        taskReadUpdate.setCustomerUsername(task.getCustomer().getUsername());
         if (task.getFreelancer() != null) {
-            taskDTO.setFreelancerUsername(task.getFreelancer().getUsername());
+            taskReadUpdate.setFreelancerUsername(task.getFreelancer().getUsername());
         }
-        taskDTO.setTitle(task.getTitle());
-        taskDTO.setProblem(task.getProblem());
-        taskDTO.setDeadline(task.getDeadline());
-        taskDTO.setStatus(task.getStatus());
-        taskDTO.setType(task.getType());
-        taskDTO.setPayment(task.getPayment());
-        return taskDTO;
+        taskReadUpdate.setTitle(task.getTitle());
+        taskReadUpdate.setProblem(task.getProblem());
+        taskReadUpdate.setDeadline(task.getDeadline());
+        taskReadUpdate.setStatus(task.getStatus());
+        taskReadUpdate.setType(task.getType());
+        taskReadUpdate.setPayment(task.getPayment());
+        return taskReadUpdate;
     }
 
     /**
      * Converts a TaskCreationDTO to a Task entity.
      *
-     * @param taskDTO the TaskCreationDTO to convert
+     * @param taskCreation the TaskCreationDTO to convert
      * @return the converted Task entity
      */
-    public Task taskDTOToTask(TaskCreationDTO taskDTO) {
+    public Task toTask(TaskCreation taskCreation) {
         Task task = new Task(
-                taskDTO.getCustomer(),
-                taskDTO.getTitle(),
-                taskDTO.getProblem(),
-                taskDTO.getDeadline(),
-                taskDTO.getPayment(),
-                taskDTO.getType());
-        task.setStatus(taskDTO.getTaskStatus());
+                taskCreation.getCustomer(),
+                taskCreation.getTitle(),
+                taskCreation.getProblem(),
+                taskCreation.getDeadline(),
+                taskCreation.getPayment(),
+                taskCreation.getType());
+        task.setStatus(taskCreation.getTaskStatus());
         return task;
     }
 
@@ -160,7 +160,7 @@ public class Mapper {
      * @param fb the FeedbackDTO to convert
      * @return the converted Feedback entity
      */
-    public Feedback feedbackDtoToFeedback(FeedbackDTO fb) {
+    public Feedback toFeedback(FeedbackReadUpdate fb) {
         Feedback feedback = new Feedback();
         feedback.setId(fb.getId());
         feedback.setRating(fb.getRating());
@@ -186,7 +186,7 @@ public class Mapper {
      * @param fb the FeedbackCreationDTO to convert
      * @return the converted Feedback entity
      */
-    public Feedback feedbackCreationDtoToFeedback(FeedbackCreationDTO fb) {
+    public Feedback toFeedback(FeedbackCreation fb) {
         Feedback feedback = new Feedback();
         feedback.setRating(fb.getRating());
         feedback.setComment(fb.getComment());
@@ -211,8 +211,8 @@ public class Mapper {
      * @param fb the Feedback entity to convert
      * @return the converted FeedbackDTO
      */
-    public FeedbackDTO feedbackToFeedbackDto(Feedback fb) {
-        return new FeedbackDTO(
+    public FeedbackReadUpdate toFeedbackReadUpdate(Feedback fb) {
+        return new FeedbackReadUpdate(
                 fb.getId(),
                 fb.getSender().getId(),
                 fb.getReceiver().getId(),
@@ -224,15 +224,15 @@ public class Mapper {
     /**
      * Converts a ProposalCreationDTO to a Proposal entity.
      *
-     * @param proposalCreationDTO the ProposalCreationDTO to convert
+     * @param proposalCreation the ProposalCreationDTO to convert
      * @return the converted Proposal entity
      */
-    public Proposal proposalCreationDTOToProposal(ProposalCreationDTO proposalCreationDTO) {
+    public Proposal toProposal(ProposalCreation proposalCreation) {
         return new Proposal(
-                Optional.ofNullable(proposalCreationDTO.getFreelancerId())
+                Optional.ofNullable(proposalCreation.getFreelancerId())
                         .map(userService::find)
                         .orElse(null),
-                Optional.ofNullable(proposalCreationDTO.getTaskId())
+                Optional.ofNullable(proposalCreation.getTaskId())
                         .map(taskService::getById)
                         .orElse(null)
         );
@@ -244,8 +244,8 @@ public class Mapper {
      * @param proposal the Proposal to convert
      * @return the converted ProposalCreationDTO
      */
-    public ProposalCreationDTO proposalToProposalCreationDTO(Proposal proposal) {
-        return new ProposalCreationDTO(
+    public ProposalCreation toProposalCreation(Proposal proposal) {
+        return new ProposalCreation(
                 Optional.ofNullable(proposal.getFreelancer()).map(User::getId).orElse(null), // freelancer
                 Optional.ofNullable(proposal.getTask()).map(Task::getId).orElse(null) // task
         );

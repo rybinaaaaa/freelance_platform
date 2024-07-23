@@ -1,4 +1,4 @@
-package freelanceplatform.dto.entityDTO;
+package freelanceplatform.dto.readUpdate;
 
 import freelanceplatform.model.Role;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserReadUpdate {
 
     private Integer id;
     private String username;

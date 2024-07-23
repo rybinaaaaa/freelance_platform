@@ -1,9 +1,9 @@
-package freelanceplatform.dto.entityDTO;
+package freelanceplatform.dto.readUpdate;
 
 import lombok.Value;
 
 @Value
-public class FeedbackDTO {
+public class FeedbackReadUpdate {
 
     Integer id;
     Integer senderId;
