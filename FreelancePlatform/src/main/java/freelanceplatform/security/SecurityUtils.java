@@ -1,7 +1,7 @@
 package freelanceplatform.security;
 
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 

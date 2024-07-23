@@ -6,7 +6,7 @@ import freelanceplatform.dto.entityCreationDTO.UserCreationDTO;
 import freelanceplatform.dto.entityDTO.UserDTO;
 import freelanceplatform.environment.Generator;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

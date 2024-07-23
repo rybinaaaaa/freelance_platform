@@ -3,7 +3,7 @@ package freelanceplatform.controllers.handler;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

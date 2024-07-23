@@ -1,4 +1,4 @@
-package freelanceplatform.security.model;
+package freelanceplatform.model.security;
 
 import freelanceplatform.model.User;
 import org.springframework.security.core.GrantedAuthority;

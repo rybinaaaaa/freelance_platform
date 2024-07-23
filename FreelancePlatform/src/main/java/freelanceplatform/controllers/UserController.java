@@ -7,7 +7,7 @@ import freelanceplatform.dto.entityDTO.UserDTO;
 import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Resume;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -127,7 +126,7 @@ public class UserController {
      * @param auth            the authentication object
      * @return the ResponseEntity indicating the result of the operation
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole({'ROLE_USER', 'ROLE_ADMIN'})")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable Integer id,
                                            @RequestBody UserDTO userDTOToUpdate, Authentication auth) {

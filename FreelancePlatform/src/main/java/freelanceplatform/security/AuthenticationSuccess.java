@@ -1,8 +1,8 @@
 package freelanceplatform.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freelanceplatform.security.model.LoginStatus;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.LoginStatus;
+import freelanceplatform.model.security.UserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

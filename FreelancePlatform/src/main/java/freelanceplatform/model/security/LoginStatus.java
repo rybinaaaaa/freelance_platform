@@ -1,4 +1,4 @@
-package freelanceplatform.security.model;
+package freelanceplatform.model.security;
 
 public class LoginStatus {
     private boolean loggedIn;

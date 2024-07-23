@@ -6,7 +6,7 @@ import freelanceplatform.model.Role;
 import freelanceplatform.model.Solution;
 import freelanceplatform.model.Task;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.SolutionService;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;

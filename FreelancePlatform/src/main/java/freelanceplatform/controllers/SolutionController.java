@@ -1,10 +1,8 @@
 package freelanceplatform.controllers;
 
-import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Solution;
-import freelanceplatform.model.Task;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.SolutionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

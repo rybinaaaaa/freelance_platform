@@ -3,12 +3,10 @@ package freelanceplatform.controllers;
 import freelanceplatform.dto.Mapper;
 import freelanceplatform.dto.entityCreationDTO.FeedbackCreationDTO;
 import freelanceplatform.dto.entityDTO.FeedbackDTO;
-import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Feedback;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.FeedbackService;
-import freelanceplatform.services.security.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
-import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 /**

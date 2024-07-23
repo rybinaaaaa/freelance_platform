@@ -37,12 +37,12 @@ public class TaskChangesConsumer extends ChangesConsumer {
         TaskTopicsTypes topicType = TaskTopicsTypes.valueOf(topic.toUpperCase());
         String taskTitle = mapper.readTree(taskJson).get("title").asText();
         String freelancerUsername = "";
-        String customerUsername = "";
+//        String customerUsername = "";
 
         if (!mapper.readTree(taskJson).get("freelancer").asText().equals("null"))
             freelancerUsername = mapper.readTree(taskJson).get("freelancer").get("username").asText();
-        if (!mapper.readTree(taskJson).get("customer").asText().equals("null"))
-            customerUsername = mapper.readTree(taskJson).get("customer").get("username").asText();
+//        if (!mapper.readTree(taskJson).get("customer").asText().equals("null"))
+//            customerUsername = mapper.readTree(taskJson).get("customer").get("username").asText();
 
         SendEmailStrategy sendEmailStrategy = topicsFactory.createStrategy(topicType);
         notificationSender.setStrategy(sendEmailStrategy);

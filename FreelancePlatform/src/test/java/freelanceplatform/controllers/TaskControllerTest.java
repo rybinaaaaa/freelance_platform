@@ -7,7 +7,7 @@ import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
 import freelanceplatform.dto.entityDTO.TaskDTO;
 import freelanceplatform.environment.Generator;
 import freelanceplatform.model.*;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import freelanceplatform.utils.IntegrationTestBase;

@@ -4,12 +4,8 @@ package freelanceplatform.controllers;
 import freelanceplatform.dto.Mapper;
 import freelanceplatform.dto.entityCreationDTO.TaskCreationDTO;
 import freelanceplatform.dto.entityDTO.TaskDTO;
-import freelanceplatform.exceptions.NotFoundException;
-import freelanceplatform.exceptions.ValidationException;
 import freelanceplatform.model.*;
-import freelanceplatform.security.model.UserDetails;
-import freelanceplatform.services.ProposalService;
-import freelanceplatform.services.SolutionService;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 
 @Slf4j

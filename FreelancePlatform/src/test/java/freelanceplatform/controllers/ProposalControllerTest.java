@@ -7,7 +7,7 @@ import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Proposal;
 import freelanceplatform.model.Role;
 import freelanceplatform.model.User;
-import freelanceplatform.security.model.UserDetails;
+import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.ProposalService;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
