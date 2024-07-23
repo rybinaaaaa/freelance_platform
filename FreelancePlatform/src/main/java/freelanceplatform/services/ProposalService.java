@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @CacheConfig(cacheNames = "proposals")
-public class ProposalService {
+public class ProposalService implements IService<Proposal, Integer> {
 
     private final ProposalRepository proposalRepository;
     private final UserRepository userRepository;

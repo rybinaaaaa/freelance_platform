@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = {"feedbacks"})
 @Slf4j
-public class FeedbackService {
+public class FeedbackService implements IService<Feedback, Integer> {
 
     private final FeedbackRepository feedbackRepository;
     private final UserService userService;
