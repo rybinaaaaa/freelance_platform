@@ -8,6 +8,7 @@ import freelanceplatform.model.*;
 import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -27,18 +29,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/rest/tasks")
 @PreAuthorize("permitAll()")
+@RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
     private final UserService userService;
     private final Mapper mapper;
-
-    @Autowired
-    public TaskController(TaskService taskService, UserService userService, Mapper mapper) {
-        this.taskService = taskService;
-        this.userService = userService;
-        this.mapper = mapper;
-    }
 
     /**
      * Saves a new task based on the provided TaskCreationDTO.
@@ -68,8 +64,10 @@ public class TaskController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskReadUpdate> getById(@PathVariable Integer id) {
-        final TaskReadUpdate taskReadUpdate = mapper.toTaskReadUpdate(taskService.getById(id));
-        return ResponseEntity.ok(taskReadUpdate);
+//        final TaskReadUpdate taskReadUpdate = mapper.toTaskReadUpdate(taskService.findById(id).get());
+//        return ResponseEntity.ok(taskReadUpdate);
+        return taskService.findById(id)
+                .map(task -> ResponseEntity.ok(mapper.toTaskReadUpdate(task))).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -82,14 +80,10 @@ public class TaskController {
     @GetMapping(value = "/taskBoard", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<TaskReadUpdate>> getAllTaskBoard(@RequestParam boolean fromNewest,
                                                                     @RequestParam(required = false) TaskType type) {
-
         List<Task> tasks = Optional.ofNullable(type)
                 .map(t -> taskService.getAllTaskBoardByTypeAndPostedDate(t, fromNewest))
                 .orElseGet(() -> taskService.getAllTaskBoardByPostedDate(fromNewest));
-
-
         List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
-
         return ResponseEntity.ok(taskReadUpdates);
     }
 
@@ -106,7 +100,6 @@ public class TaskController {
     public ResponseEntity<Iterable<TaskReadUpdate>> getAllTakenByTaskStatusAndExpiredStatus(@RequestParam(required = false) TaskStatus taskStatus,
                                                                                             @RequestParam boolean expired, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
-
         List<Task> tasks = Optional.ofNullable(taskStatus)
                 .map(t -> taskService.getAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), t, expired))
                 .orElseGet(() -> taskService.getAllTakenByUserIdAndDeadlineStatus(user.getId(), expired));
@@ -131,7 +124,6 @@ public class TaskController {
         List<Task> tasks = Optional.ofNullable(taskStatus)
                 .map(t -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), t, expired))
                 .orElseGet(() -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired));
-
         List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
         return ResponseEntity.ok(taskReadUpdates);
     }
@@ -146,9 +138,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping(value = "/posted/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TaskReadUpdate updatedTaskReadUpdate, Authentication auth) {
-        final Task task = taskService.getById(id);
-        if (!hasAccess(task, auth))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        final Task task = taskService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(task), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         task.setTitle(updatedTaskReadUpdate.getTitle());
         task.setProblem(updatedTaskReadUpdate.getProblem());
         task.setDeadline(updatedTaskReadUpdate.getDeadline());
@@ -166,10 +157,11 @@ public class TaskController {
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @DeleteMapping(value = "/posted/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth) {
-        Task task = taskService.getById(id);
-        if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        taskService.delete(task);
-        return ResponseEntity.noContent().build();
+        final Task task = taskService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(task), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return taskService.deleteById(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     /**
@@ -182,9 +174,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/posted/{id}/proposals/{proposalId}")
     public ResponseEntity<Void> assignFreelancer(@PathVariable Integer id, @PathVariable Integer proposalId, Authentication auth) {
-        Task task = taskService.getById(id);
-        if (!hasAccess(task, auth))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        final Task task = taskService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(task), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         User freelancer = userService.findFreelancerByProposalId(proposalId);
         taskService.assignFreelancer(task, freelancer);
         return ResponseEntity.noContent().build();
@@ -199,8 +190,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/posted/{id}/accept")
     public ResponseEntity<Void> accept(@PathVariable Integer id, Authentication auth) {
-        Task task = taskService.getById(id);
-        if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        final Task task = taskService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(task), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         taskService.accept(task);
         return ResponseEntity.noContent().build();
     }
@@ -214,8 +205,8 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/{id}/remove-freelancer")
     public ResponseEntity<Void> removeFreelancer(@PathVariable Integer id, Authentication auth) {
-        Task task = taskService.getById(id);
-        if (!hasAccess(task, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        final Task task = taskService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(task), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         taskService.removeFreelancer(task);
         return ResponseEntity.noContent().build();
     }
@@ -243,7 +234,9 @@ public class TaskController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(value = "/taken/{id}")
     public ResponseEntity<Void> sendOnReview(@PathVariable Integer id) {
-        taskService.senOnReview(taskService.getById(id));
+        final Task task = taskService.findById(id).orElse(null);
+        Objects.requireNonNull(task);
+        taskService.senOnReview(task);
         return ResponseEntity.noContent().build();
     }
 

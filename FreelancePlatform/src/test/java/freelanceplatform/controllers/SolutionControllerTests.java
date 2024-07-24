@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Objects;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -67,7 +69,9 @@ public class SolutionControllerTests extends IntegrationTestBase {
     @Test
     public void saveByUserReturnsStatusCreated() throws Exception {
         Solution solution = Generator.generateSolution();
-        solution.setTask(taskService.getById(1));
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
+        solution.setTask(task);
 
         SolutionCreation solutionCreation = mapper.toSolutionCreation(solution);
         String solutionJson = objectMapper.writeValueAsString(solutionCreation);

@@ -10,7 +10,6 @@ import freelanceplatform.services.SolutionService;
 import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -110,8 +109,7 @@ public class Mapper {
                         .map(Optional::get)
                         .orElse(null));
         proposal.setTask(
-                Optional.ofNullable(proposalReadUpdate.getTaskId())
-                        .map(taskService::getById)
+                Optional.ofNullable(proposalReadUpdate.getTaskId()).flatMap(taskService::findById)
                         .orElse(null)
         );
 
@@ -243,8 +241,7 @@ public class Mapper {
                         .map(userService::findById)
                         .map(Optional::get)
                         .orElse(null),
-                Optional.ofNullable(proposalCreation.getTaskId())
-                        .map(taskService::getById)
+                Optional.ofNullable(proposalCreation.getTaskId()).flatMap(taskService::findById)
                         .orElse(null)
         );
     }
@@ -267,8 +264,9 @@ public class Mapper {
         Solution solution = new Solution();
 
         solution.setTask(
-                Optional.ofNullable(taskService.getById(solutionCreation.getTaskId()))
-                        .orElseThrow(() -> new NotFoundException("Task has not found")));
+                Optional.ofNullable(solutionCreation.getTaskId()).flatMap(taskService::findById)
+                        .orElse(null)
+        );
         solution.setLink(solutionCreation.getLink());
         solution.setDescription(solutionCreation.getDescription());
 

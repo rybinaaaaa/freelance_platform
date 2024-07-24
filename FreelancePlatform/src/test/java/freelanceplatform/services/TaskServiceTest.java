@@ -7,23 +7,18 @@ import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.exceptions.ValidationException;
 import freelanceplatform.model.*;
 import freelanceplatform.utils.CacheableTestBase;
-import freelanceplatform.utils.IntegrationTestBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ActiveProfiles("services")
 public class TaskServiceTest extends CacheableTestBase {
@@ -70,7 +65,7 @@ public class TaskServiceTest extends CacheableTestBase {
 
     @Test
     public void testCaching() {
-        taskService.getById(task.getId());
+        taskService.findById(task.getId());
 
         Assertions.assertTrue(Optional.ofNullable(cacheManager.getCache("tasks").get(task.getId())).isPresent());
         Assertions.assertFalse(Optional.ofNullable(cacheManager.getCache("tasks").get(-1)).isPresent());
@@ -78,14 +73,14 @@ public class TaskServiceTest extends CacheableTestBase {
 
     @Test
     public void getThrowsNotFoundExceptionIfIdIsWrong(){
-        assertThrows(NotFoundException.class, () -> taskService.getById(-1));
+        assertThrows(NotFoundException.class, () -> taskService.findById(-1));
     }
 
     @Test
-    public void getByIdReturnsTaskWithCorrectId(){
-//        Integer id = taskService.getById(1).getId();
+    public void findByIdReturnsTaskWithCorrectId(){
         Integer id = taskService.findAll().stream().findAny().map(Task::getId).orElse(null);
-        Task task = taskService.getById(id);
+        Task task = taskService.findById(id).orElse(null);
+        Objects.requireNonNull(task);
         assertEquals(id, task.getId());
     }
 
@@ -111,7 +106,7 @@ public class TaskServiceTest extends CacheableTestBase {
         userRepo.save(freelancer);
         taskRepo.save(task);
         assertTrue(freelancer.getTakenTasks().contains(task));
-        taskService.delete(task);
+        taskService.deleteById(task.getId());
         assertFalse(freelancer.getTakenTasks().contains(task));
     }
 
@@ -119,15 +114,8 @@ public class TaskServiceTest extends CacheableTestBase {
     public void deleteRemovesTaskFromCustomersPostedTasks(){
         task.setStatus(TaskStatus.ASSIGNED);
         assertTrue(task.getCustomer().getPostedTasks().contains(task));
-        taskService.delete(task);
+        taskService.deleteById(task.getId());
         assertFalse(task.getCustomer().getPostedTasks().contains(task));
-    }
-
-    @Test
-    public void deleteThrowsNotFoundExceptionIfTaskDoesNotExist(){
-        task = Generator.generateTask();
-        task.setId(-1);
-        assertThrows(NotFoundException.class, ()-> taskService.delete(task));
     }
 
     @Test

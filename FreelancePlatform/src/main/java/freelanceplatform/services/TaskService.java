@@ -1,8 +1,6 @@
 package freelanceplatform.services;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import freelanceplatform.data.SolutionRepository;
 import freelanceplatform.data.TaskRepository;
 import freelanceplatform.data.UserRepository;
@@ -31,7 +29,7 @@ import static freelanceplatform.kafka.topics.TaskChangesTopic.*;
 @Service
 @CacheConfig(cacheNames={"tasks"})
 @Slf4j
-public class TaskService {
+public class TaskService implements IService<Task, Integer>{
 
     private final TaskRepository taskRepo;
     private final UserRepository userRepo;
@@ -80,12 +78,12 @@ public class TaskService {
      */
     @Transactional(readOnly = true)
     @Cacheable
-    public Task getById(Integer id){
+    public Optional<Task> findById(Integer id){
         log.info("Get task by id {}.", id);
         Objects.requireNonNull(id);
         Optional<Task> task = taskRepo.findById(id);
         if (task.isEmpty()) throw new NotFoundException("Task identified by " + id + " not found.");
-        return task.get();
+        return task;
     }
 
     /**
@@ -222,26 +220,29 @@ public class TaskService {
     }
 
     /**
-     * Deletes a task.
+     * Deletes a task by its ID. This method is transactional and will evict any related caches upon successful execution.
+     * It ensures that the task is removed from both the customer's posted tasks and the freelancer's taken tasks (if applicable).
      *
-     * @param task Task object to delete.
-     * @throws NotFoundException if the task to delete is not found.
+     * @param id the ID of the task to be deleted. Must not be null.
+     * @return {@code true} if the task was found and deleted successfully, {@code false} otherwise.
+     * @throws NullPointerException if the provided ID is null.
      */
     @Transactional
-    @CacheEvict(key = "#task.id")
-    public void delete(Task task){
-        Objects.requireNonNull(task);
-        if (exists(task.getId())) {
-            task.getCustomer().removePostedTask(task);
-            if (task.getFreelancer()!=null) {
-                task.getFreelancer().removeTakenTask(task);
-                userRepo.save(task.getFreelancer());
-            }
-            userRepo.save(task.getCustomer());
-            taskRepo.delete(task);
-        } else {
-            throw new NotFoundException("Task to delete identified by " + task.getId() + " not found.");
-        }
+    @CacheEvict
+    public boolean deleteById(Integer id){
+        Objects.requireNonNull(id);
+        log.info("Deleting feedback with id {}", id);
+        return taskRepo.findById(id)
+                .map(task -> {
+                    task.getCustomer().removePostedTask(task);
+                    if (task.getFreelancer()!=null) {
+                        task.getFreelancer().removeTakenTask(task);
+                        userRepo.save(task.getFreelancer());
+                    }
+                    userRepo.save(task.getCustomer());
+                    taskRepo.delete(task);
+                    return true;
+                }).orElse(false);
     }
 
     /**

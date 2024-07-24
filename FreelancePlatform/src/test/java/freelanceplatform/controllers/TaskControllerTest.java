@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
@@ -218,7 +219,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void updateReturnsNotFoundForWrongId() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setFreelancer(userAdmin);
 
         TaskCreation taskCreation = mapper.toTaskCreation(task);
@@ -233,7 +235,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void updateReturnsBadRequestIfTaskStatusIsNotUnassigned() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setStatus(TaskStatus.ASSIGNED);
         task.setCustomer(emptyUser);
         taskService.save(task);
@@ -251,7 +254,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void updateByUserReturnsStatusNoContent() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setStatus(TaskStatus.UNASSIGNED);
         task.setCustomer(emptyUser);
         taskService.save(task);
@@ -269,7 +273,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void updateByAdminReturnsStatusForbidden() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
@@ -287,7 +292,8 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void updateByGuestReturnsStatusForbidden() throws Exception {
         emptyUser.setRole(Role.GUEST);
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setStatus(TaskStatus.UNASSIGNED);
         taskService.save(task);
         task.setTitle("New title");
@@ -322,7 +328,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void deleteByUserReturnsStatusNoContent() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setCustomer(emptyUser);
         taskService.save(task);
         mockMvc.perform(delete("/rest/tasks/posted/1")
@@ -341,7 +348,8 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     //todo
     public void assignFreelancerByUserReturnsStatusNoContent() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setCustomer(emptyUser);
         taskService.save(task);
         mockMvc.perform(post("/rest/tasks/posted/1/proposals/1")
@@ -366,7 +374,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void acceptByUserReturnsStatusNoContent() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setCustomer(emptyUser);
         task.setSolution(Generator.generateSolution());
         taskService.save(task);
@@ -392,7 +401,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void removeFreelancerByUserReturnsStatusNoContent() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setFreelancer(emptyUser);
         task.setCustomer(emptyUser);
         taskService.save(task);
@@ -403,7 +413,8 @@ public class TaskControllerTest extends IntegrationTestBase {
 
     @Test
     public void removeFreelancerByAdminReturnsStatusForbidden() throws Exception {
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setFreelancer(userAdmin);
         taskService.save(task);
         mockMvc.perform(post("/rest/tasks/1/remove-freelancer")
@@ -414,7 +425,8 @@ public class TaskControllerTest extends IntegrationTestBase {
     @Test
     public void removeFreelancerByGuestReturnsStatusForbidden() throws Exception {
         emptyUser.setRole(Role.GUEST);
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setFreelancer(emptyUser);
         taskService.save(task);
         mockMvc.perform(post("/rest/tasks/1/remove-freelancer")
@@ -426,7 +438,8 @@ public class TaskControllerTest extends IntegrationTestBase {
     public void attachSolutionByUserReturnsStatusNoContent() throws Exception {
         final Solution solution = Generator.generateSolution();
 
-        Task task = taskService.getById(1);
+        Task task = taskService.findById(1).orElse(null);
+        Objects.requireNonNull(task);
         task.setCustomer(emptyUser);
         solution.setTask(task);
         taskService.save(task);
