@@ -62,9 +62,9 @@ public class UserService implements IService<User, Integer> {
     @Cacheable
     public Optional<User> findById(Integer id) {
         Objects.requireNonNull(id);
+        log.info("Finding user by id {}", id);
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) throw new NotFoundException("User with id " + id + " not found");
-        log.info("User with id {} has been added to cache", id);
         return userOptional;
     }
 
@@ -76,6 +76,7 @@ public class UserService implements IService<User, Integer> {
     @Transactional
     public User findByUsername(String username) {
         Objects.requireNonNull(username);
+        log.info("Finding user by username {}", username);
         Optional<User> userOptional = userRepository.getByUsername(username);
         if (userOptional.isEmpty()) throw new NotFoundException("User with username " + username + " not found");
         return userOptional.get();
@@ -89,6 +90,7 @@ public class UserService implements IService<User, Integer> {
     @Transactional
     public User findFreelancerByProposalId(Integer proposalId) {
         Objects.requireNonNull(proposalId);
+        log.info("Finding freelancer by proposal id {}", proposalId);
         final Proposal proposal = proposalRepository.findById(proposalId)
                 .orElseThrow(() -> new NotFoundException("Proposal with id " + proposalId + " not found"));
         return proposal.getFreelancer();
@@ -100,6 +102,7 @@ public class UserService implements IService<User, Integer> {
      */
     @Transactional
     public List<User> findAll() {
+        log.info("Finding all users");
         return userRepository.findAll();
     }
 
@@ -111,6 +114,7 @@ public class UserService implements IService<User, Integer> {
     @CachePut(key = "#user.id")
     public User save(User user){
         Objects.requireNonNull(user);
+        log.info("Saving user with id {}", user.getId());
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new ValidationException("User with this username is already exist");
         }
@@ -133,6 +137,7 @@ public class UserService implements IService<User, Integer> {
     @CachePut(key = "#user.id")
     public User update(User user){
         Objects.requireNonNull(user);
+        log.info("Updating user with id {}", user.getId());
         if (exists(user.getId())) {
             user.encodePassword(passwordEncoder);
             System.out.println(user);
@@ -150,6 +155,8 @@ public class UserService implements IService<User, Integer> {
     @Transactional
     @CacheEvict
     public boolean deleteById(Integer id){
+        Objects.requireNonNull(id);
+        log.info("Deleting user with id {}", id);
         return userRepository.findById(id)
                 .map(user -> {
                     userRepository.delete(user);
@@ -165,6 +172,7 @@ public class UserService implements IService<User, Integer> {
      */
     public boolean exists(Integer id){
         Objects.requireNonNull(id);
+        log.info("Checking if user with id {} exists", id);
         return userRepository.existsById(id);
     }
 
@@ -176,6 +184,10 @@ public class UserService implements IService<User, Integer> {
      */
     @Transactional
     public void saveResume(String filename, byte[] content, User user) {
+        Objects.requireNonNull(filename);
+        Objects.requireNonNull(content);
+        Objects.requireNonNull(user);
+        log.info("Saving resume for user with id {}", user.getId());
         if (content.length == 0 || filename.equals("")) throw new ValidationException("Bad inputs");
         Resume resume = new Resume();
         resume.setFilename(filename);
@@ -191,6 +203,8 @@ public class UserService implements IService<User, Integer> {
      */
     @Transactional
     public Resume getUsersResume(User user) {
+        Objects.requireNonNull(user);
+        log.info("Retrieving user resume for user with id {}", user.getId());
         Optional<Resume> resume = resumeRepository.findByUserId(user.getId());
         if (resume.isEmpty()) throw new NotFoundException("Resume for user with id " + user.getId() + " not found");
         return resume.get();

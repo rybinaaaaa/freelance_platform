@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -38,6 +39,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
     @Transactional
     @CachePut(key = "#newFb.id")
     public Feedback update(Feedback newFb) {
+        Objects.requireNonNull(newFb);
         log.info("Updating feedback with id {}", newFb.getId());
         return feedbackRepository.findById(newFb.getId()).map(fb -> {
             fb.setComment(newFb.getComment());
@@ -55,6 +57,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
     @Transactional
     @CachePut(key = "#feedback.id")
     public Feedback save(Feedback feedback) {
+        Objects.requireNonNull(feedback);
         log.info("Saving new feedback with id {}", feedback.getId());
         Optional.ofNullable(feedback.getReceiver())
                 .flatMap(maybeReceiver -> userService.findById(maybeReceiver.getId()))
@@ -74,6 +77,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
     @Transactional(readOnly = true)
     @Cacheable
     public Optional<Feedback> findById(Integer id) {
+        Objects.requireNonNull(id);
         log.info("Finding feedback by id {}", id);
         return feedbackRepository.findById(id);
     }
@@ -98,6 +102,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
     @Transactional
     @CacheEvict
     public boolean deleteById(Integer id) {
+        Objects.requireNonNull(id);
         log.info("Deleting feedback with id {}", id);
         return feedbackRepository.findById(id)
                 .map(feedback -> {
@@ -123,6 +128,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
      */
     @Transactional(readOnly = true)
     public List<Feedback> findByReceiver(User receiver) {
+        Objects.requireNonNull(receiver);
         log.info("Finding feedbacks by receiver {}", receiver.getUsername());
         return feedbackRepository.findByReceiver(receiver);
     }
@@ -135,6 +141,7 @@ public class FeedbackService implements IService<Feedback, Integer> {
      */
     @Transactional(readOnly = true)
     public List<Feedback> findBySender(User sender) {
+        Objects.requireNonNull(sender);
         log.info("Finding feedbacks by sender {}", sender.getUsername());
         return feedbackRepository.findBySender(sender);
     }

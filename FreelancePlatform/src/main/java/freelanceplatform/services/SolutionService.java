@@ -38,12 +38,10 @@ public class SolutionService implements IService<Solution, Integer>{
     @Transactional
     public Solution save(Solution solution) {
         Objects.requireNonNull(solution);
-
+        log.info("Saving solution with id {} ", solution.getId());
         Task task = solution.getTask();
         Objects.requireNonNull(task);
-
         solution.setTask(taskRepo.findById(task.getId()).orElse(null));
-
         solutionRepo.save(solution);
         return solution;
     }
@@ -69,8 +67,8 @@ public class SolutionService implements IService<Solution, Integer>{
     @Transactional(readOnly = true)
     @Cacheable
     public Optional<Solution> findById(Integer id) {
-        log.info("Get task by id {}.", id);
         Objects.requireNonNull(id);
+        log.info("Finding solution by id {}.", id);
         Optional<Solution> solution = solutionRepo.findById(id);
         if (solution.isEmpty()) throw new NotFoundException("Solution identified by " + id + " not found.");
         return solution;
@@ -87,6 +85,7 @@ public class SolutionService implements IService<Solution, Integer>{
     @Cacheable
     public Solution getByTask(Task task) {
         Objects.requireNonNull(task);
+        log.info("Finding solution with id {} by task with id {}.",task.getSolution().getId(), task.getId());
         Optional<Solution> solution = solutionRepo.findByTask(task);
         if (solution.isEmpty())
             throw new NotFoundException("Solution identified by task" + task.getId() + " not found.");
@@ -100,6 +99,7 @@ public class SolutionService implements IService<Solution, Integer>{
      * @return true if a solution with the specified ID exists; false otherwise.
      */
     public boolean exists(Integer id) {
+        log.info("Checking if solution with id {} exists.", id);
         Objects.requireNonNull(id);
         return solutionRepo.existsById(id);
     }
@@ -114,6 +114,7 @@ public class SolutionService implements IService<Solution, Integer>{
     @CachePut(key = "#solution.id")
     public Solution update(Solution solution) {
         Objects.requireNonNull(solution);
+        log.info("Updating solution with id {} ", solution.getId());
         if (exists(solution.getId())) {
             solutionRepo.save(solution);
             return solution;
@@ -134,7 +135,7 @@ public class SolutionService implements IService<Solution, Integer>{
     @CacheEvict
     public boolean deleteById(Integer id){
         Objects.requireNonNull(id);
-        log.info("Deleting task with id {}", id);
+        log.info("Deleting solution with id {}", id);
         return solutionRepo.findById(id)
                 .map(solution -> {
                     Optional.ofNullable(solution.getTask())

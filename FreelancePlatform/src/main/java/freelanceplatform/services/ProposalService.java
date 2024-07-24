@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -40,6 +41,7 @@ public class ProposalService implements IService<Proposal, Integer> {
     @Transactional
     @CachePut(key = "#proposal.id")
     public Proposal update(Proposal proposal) {
+        Objects.requireNonNull(proposal);
         log.info("Updating proposal with id {}", proposal.getId());
         return proposalRepository.findById(proposal.getId()).map(pr -> {
             Optional.ofNullable(pr.getFreelancer()).ifPresent(fr -> fr.deleteProposal(pr));
@@ -57,6 +59,7 @@ public class ProposalService implements IService<Proposal, Integer> {
     @Transactional
     @CachePut(key = "#proposal.id")
     public Proposal save(Proposal proposal) {
+        Objects.requireNonNull(proposal);
         log.info("Saving new proposal with id {}", proposal.getId());
         Optional.ofNullable(proposal.getFreelancer()).flatMap(maybeFreelancer -> userRepository.findById(maybeFreelancer.getId()))
                 .ifPresent(freelancer1 -> freelancer1.addProposal(proposal));
@@ -79,6 +82,7 @@ public class ProposalService implements IService<Proposal, Integer> {
     @Transactional(readOnly = true)
     @Cacheable
     public Optional<Proposal> findById(Integer id) {
+        Objects.requireNonNull(id);
         log.info("Finding proposal by id {}", id);
         return proposalRepository.findById(id);
     }
@@ -102,6 +106,7 @@ public class ProposalService implements IService<Proposal, Integer> {
      */
     @Transactional(readOnly = true)
     public List<Proposal> findByFreelancer(User freelancer) {
+        Objects.requireNonNull(freelancer);
         log.info("Finding proposals by freelancer {}", freelancer.getUsername());
         return proposalRepository.findByFreelancer(freelancer);
     }
@@ -115,6 +120,7 @@ public class ProposalService implements IService<Proposal, Integer> {
     @Transactional
     @CacheEvict
     public boolean deleteById(Integer id) {
+        Objects.requireNonNull(id);
         log.info("Deleting proposal with id {}", id);
         return proposalRepository.findById(id)
                 .map(proposal -> {

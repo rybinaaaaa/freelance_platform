@@ -10,7 +10,6 @@ import freelanceplatform.services.TaskService;
 import freelanceplatform.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +78,8 @@ public class TaskController {
     public ResponseEntity<Iterable<TaskReadUpdate>> getAllTaskBoard(@RequestParam boolean fromNewest,
                                                                     @RequestParam(required = false) TaskType type) {
         List<Task> tasks = Optional.ofNullable(type)
-                .map(t -> taskService.getAllTaskBoardByTypeAndPostedDate(t, fromNewest))
-                .orElseGet(() -> taskService.getAllTaskBoardByPostedDate(fromNewest));
+                .map(t -> taskService.findAllTaskBoardByTypeAndPostedDate(t, fromNewest))
+                .orElseGet(() -> taskService.findAllTaskBoardByPostedDate(fromNewest));
         List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
         return ResponseEntity.ok(taskReadUpdates);
     }
@@ -99,8 +98,8 @@ public class TaskController {
                                                                                             @RequestParam boolean expired, Authentication auth) {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
         List<Task> tasks = Optional.ofNullable(taskStatus)
-                .map(t -> taskService.getAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), t, expired))
-                .orElseGet(() -> taskService.getAllTakenByUserIdAndDeadlineStatus(user.getId(), expired));
+                .map(t -> taskService.findAllTakenByUserIdAndStatusAndDeadlineStatus(user.getId(), t, expired))
+                .orElseGet(() -> taskService.findAllTakenByUserIdAndDeadlineStatus(user.getId(), expired));
 
         List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
         return ResponseEntity.ok(taskReadUpdates);
@@ -120,8 +119,8 @@ public class TaskController {
         User user = ((UserDetails) auth.getPrincipal()).getUser();
 
         List<Task> tasks = Optional.ofNullable(taskStatus)
-                .map(t -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), t, expired))
-                .orElseGet(() -> taskService.getAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired));
+                .map(t -> taskService.findAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), t, expired))
+                .orElseGet(() -> taskService.findAllPostedByUserIdAndStatusAndExpiredStatus(user.getId(), taskStatus, expired));
         List<TaskReadUpdate> taskReadUpdates = tasks.stream().map(mapper::toTaskReadUpdate).toList();
         return ResponseEntity.ok(taskReadUpdates);
     }

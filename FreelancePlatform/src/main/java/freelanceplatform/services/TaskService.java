@@ -52,6 +52,7 @@ public class TaskService implements IService<Task, Integer>{
     @CachePut(key = "#task.id")
     @Transactional
     public Task save(Task task){
+        log.info("Saving new task with id {}", task.getId());
         Objects.requireNonNull(task);
         taskRepo.save(task);
         taskChangesProducer.sendMessage(taskChangesProducer.toJsonString(task), TaskPosted);
@@ -65,6 +66,7 @@ public class TaskService implements IService<Task, Integer>{
      */
     @Transactional
     public void saveAll(List<Task> tasks){
+        log.info("Saving all tasks");
         Objects.requireNonNull(tasks);
         taskRepo.saveAll(tasks);
     }
@@ -79,7 +81,7 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional(readOnly = true)
     @Cacheable
     public Optional<Task> findById(Integer id){
-        log.info("Get task by id {}.", id);
+        log.info("Finding Task by id {}", id);
         Objects.requireNonNull(id);
         Optional<Task> task = taskRepo.findById(id);
         if (task.isEmpty()) throw new NotFoundException("Task identified by " + id + " not found.");
@@ -93,7 +95,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllTaskBoardByPostedDate(boolean fromNewest){
+    public List<Task> findAllTaskBoardByPostedDate(boolean fromNewest){
+        log.info("Finding all tasks by posted date fromNewest: {}", fromNewest);
         if (fromNewest) {
             return taskRepo.findAllByStatusFromNewest(TaskStatus.UNASSIGNED);
         } else {
@@ -109,7 +112,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllTaskBoardByTypeAndPostedDate(TaskType type, boolean fromNewest) {
+    public List<Task> findAllTaskBoardByTypeAndPostedDate(TaskType type, boolean fromNewest) {
+        log.info("Finding all tasks by type: {} and posted date fromNewest: {}", type, fromNewest);
         if (fromNewest) {
             return taskRepo.findAllByTypeAndStatusFromNewest(type, TaskStatus.UNASSIGNED);
         } else {
@@ -125,7 +129,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllTakenByUserIdAndDeadlineStatus(Integer userId, boolean expired){
+    public List<Task> findAllTakenByUserIdAndDeadlineStatus(Integer userId, boolean expired){
+        log.info("Finding all taken tasks by user id: {} and deadline status is expired: {}", userId, expired);
         if (expired){
             return taskRepo.findAllTakenByFreelancerIdDeadlineExpired(userId);
         } else {
@@ -142,7 +147,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllTakenByUserIdAndStatusAndDeadlineStatus(Integer userId, TaskStatus taskStatus, boolean expired){
+    public List<Task> findAllTakenByUserIdAndStatusAndDeadlineStatus(Integer userId, TaskStatus taskStatus, boolean expired){
+        log.info("Finding all taken tasks by user id: {}, task status: {} and deadline status is expired: {}", userId, taskStatus, expired);
         if (expired){
             return taskRepo.findAllTakenByFreelancerIdAndStatusDeadlineExpired(userId, taskStatus);
         } else {
@@ -158,7 +164,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllPostedByUserIdAndExpiredStatus(Integer userId, boolean expired){
+    public List<Task> findAllPostedByUserIdAndExpiredStatus(Integer userId, boolean expired){
+        log.info("Finding all posted tasks by user id: {} and deadline status is expired: {}", userId, expired);
         if (expired){
             return taskRepo.findAllPostedByCustomerIdDeadlineExpired(userId);
         } else {
@@ -175,7 +182,8 @@ public class TaskService implements IService<Task, Integer>{
      * @return Iterable of Task objects.
      */
     @Transactional(readOnly = true)
-    public List<Task> getAllPostedByUserIdAndStatusAndExpiredStatus(Integer userId, TaskStatus taskStatus , boolean expired){
+    public List<Task> findAllPostedByUserIdAndStatusAndExpiredStatus(Integer userId, TaskStatus taskStatus , boolean expired){
+        log.info("Finding all posted tasks by user id: {}, task status: {} and deadline status is expired: {}", userId, taskStatus, expired);
         if (expired){
             return taskRepo.findAllPostedByCustomerIdAndStatusDeadlineExpired(userId, taskStatus);
         } else {
@@ -190,6 +198,7 @@ public class TaskService implements IService<Task, Integer>{
      */
     @Transactional(readOnly = true)
     public List<Task> findAll(){
+        log.info("Finding all tasks");
         return taskRepo.findAll();
     }
 
@@ -200,6 +209,7 @@ public class TaskService implements IService<Task, Integer>{
      * @return true if a task with the specified ID exists; false otherwise.
      */
     public boolean exists(Integer id){
+        log.info("Checking existence of task with id {}", id);
         Objects.requireNonNull(id);
         return taskRepo.existsById(id);
     }
@@ -214,6 +224,7 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional
     @CachePut(key = "#task.id")
     public Task update(Task task){
+        log.info("Updating task with id {}", task.getId());
         Objects.requireNonNull(task);
         if (exists(task.getId())) {
             if (!task.getStatus().equals(TaskStatus.UNASSIGNED))
@@ -259,6 +270,7 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional
     @CachePut(key = "#task.id")
     public Task assignFreelancer(Task task, User freelancer){
+        log.info("Assigning freelancer with id {} to task with id: {}", freelancer.getId(), task.getId());
         Objects.requireNonNull(task);
         Objects.requireNonNull(freelancer);
         task.setStatus(TaskStatus.ASSIGNED);
@@ -280,6 +292,7 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional
     @CachePut(key = "#task.id")
     public Task accept(Task task){
+        log.info("Accepting task with id {}", task.getId());
         Objects.requireNonNull(task);
         Objects.requireNonNull(task.getSolution());
         task.setStatus(TaskStatus.ACCEPTED);
@@ -298,6 +311,7 @@ public class TaskService implements IService<Task, Integer>{
     @CachePut(key = "#task.id")
     public Task removeFreelancer(Task task){
         final User freelancer = task.getFreelancer();
+        log.info("Removing freelancer with id {} from task with id {}", freelancer.getId(), task.getId());
         Objects.requireNonNull(task);
         freelancer.removeTakenTask(task);
         userRepo.save(task.getFreelancer());
@@ -320,8 +334,8 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional
     @CachePut(key = "#taskId")
     public Task attachSolution(Integer taskId, Solution solution){
-        Task task = taskRepo.findById(taskId).get();
-
+        log.info("Attaching solution with id {} to task with id {}", solution.getId(), taskId);
+        Task task = taskRepo.findById(taskId).orElse(null);
         Objects.requireNonNull(task);
         Objects.requireNonNull(solution);
 
@@ -342,6 +356,7 @@ public class TaskService implements IService<Task, Integer>{
     @Transactional
     @CachePut(key = "#task.id")
     public Task senOnReview(Task task){
+        log.info("Sending task with id {} on review", task.getId());
         task.setStatus(TaskStatus.SUBMITTED);
         task.setSubmittedDate(LocalDateTime.now());
         taskRepo.save(task);
