@@ -259,6 +259,12 @@ public class Mapper {
                 .build();
     }
 
+    /**
+     * Converts a {@link SolutionCreation} object to a {@link Solution} object.
+     *
+     * @param solutionCreation the solution creation object to convert
+     * @return the corresponding {@link Solution} object
+     */
     public Solution toSolution(SolutionCreation solutionCreation) {
 
         Solution solution = new Solution();
@@ -273,6 +279,12 @@ public class Mapper {
         return solution;
     }
 
+    /**
+     * Converts a {@link Solution} object to a {@link SolutionReadUpdate} object.
+     *
+     * @param solution the solution object to convert
+     * @return the corresponding {@link SolutionReadUpdate} object
+     */
     public SolutionReadUpdate toSolutionReadUpdate(Solution solution) {
         return SolutionReadUpdate.builder()
                 .id(solution.getId())
@@ -282,6 +294,12 @@ public class Mapper {
                 .build();
     }
 
+    /**
+     * Converts a {@link Solution} object to a {@link SolutionCreation} object.
+     *
+     * @param solution the solution object to convert
+     * @return the corresponding {@link SolutionCreation} object
+     */
     public SolutionCreation toSolutionCreation(Solution solution) {
         return SolutionCreation.builder()
                 .link(solution.getLink())
@@ -290,6 +308,12 @@ public class Mapper {
                 .build();
     }
 
+    /**
+     * Converts a {@link Task} object to a {@link TaskCreation} object.
+     *
+     * @param task the task object to convert
+     * @return the corresponding {@link TaskCreation} object
+     */
     public TaskCreation toTaskCreation(Task task) {
         return TaskCreation.builder()
                 .customerId(Optional.ofNullable(task.getCustomer())
@@ -304,6 +328,14 @@ public class Mapper {
                 .build();
     }
 
+    /**
+     * Updates a {@link Solution} object based on the provided {@link SolutionReadUpdate} object and ID.
+     *
+     * @param updatedSolution the solution read update object containing the updated values
+     * @param id the ID of the solution to update
+     * @return the updated {@link Solution} object
+     * @throws NotFoundException if no solution is found with the provided ID
+     */
     public Solution toSolution(SolutionReadUpdate updatedSolution, Integer id) {
         return solutionService.findById(id)
                 .map(solution -> {

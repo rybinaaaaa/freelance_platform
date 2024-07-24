@@ -1,6 +1,7 @@
 package notificationService.topics.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import notificationService.notificationStrategies.SendAllUsersStrategy;
 import notificationService.notificationStrategies.SendCustomerStrategy;
 import notificationService.notificationStrategies.SendEmailStrategy;
@@ -9,19 +10,20 @@ import notificationService.service.EmailSenderService;
 import notificationService.service.UserService;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@AllArgsConstructor
 public class TopicsFactory {
+
     private final WebClient webClient;
     private final EmailSenderService emailSenderService;
     private final ObjectMapper mapper;
     private final UserService userService;
 
-    public TopicsFactory(WebClient webClient, EmailSenderService emailSenderService, ObjectMapper mapper, UserService userService) {
-        this.webClient = webClient;
-        this.emailSenderService = emailSenderService;
-        this.mapper = mapper;
-        this.userService = userService;
-    }
-
+    /**
+     * Creates a strategy for sending emails based on the task topic type.
+     *
+     * @param topicType the type of the task topic
+     * @return the SendEmailStrategy corresponding to the given task topic type
+     */
     public SendEmailStrategy createStrategy(TaskTopicsTypes topicType) {
         return switch (topicType) {
             case TASK_POSTED -> new SendAllUsersStrategy(webClient, emailSenderService, mapper, userService);
@@ -31,6 +33,12 @@ public class TopicsFactory {
         };
     }
 
+    /**
+     * Creates the subject of the email based on the task topic type.
+     *
+     * @param topicType the type of the task topic
+     * @return the subject string for the email
+     */
     public String createSubject(TaskTopicsTypes topicType) {
         return switch (topicType) {
             case TASK_POSTED -> "New task was posted!";
@@ -42,6 +50,14 @@ public class TopicsFactory {
         };
     }
 
+    /**
+     * Creates the body of the email based on the task topic type, task title, and freelancer username.
+     *
+     * @param topicType          the type of the task topic
+     * @param taskTitle          the title of the task
+     * @param freelancerUsername the username of the freelancer (if applicable)
+     * @return the body string for the email
+     */
     public String createBody(TaskTopicsTypes topicType, String taskTitle, String freelancerUsername) {
         return switch (topicType) {
             case TASK_POSTED -> String.format("Task: '%s' was posted recently. This opportunity could be perfect for you!", taskTitle);

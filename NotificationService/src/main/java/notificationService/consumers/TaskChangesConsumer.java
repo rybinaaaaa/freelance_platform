@@ -28,6 +28,12 @@ public class TaskChangesConsumer extends ChangesConsumer {
         this.topicsFactory = new TopicsFactory(webClient, emailSenderService, mapper, userService);
     }
 
+    /**
+     * Consumes messages from specified Kafka topics and processes them.
+     *
+     * @param record the consumed Kafka record
+     * @throws JsonProcessingException if there is an error processing the JSON in the record
+     */
     @KafkaListener(
             topics = {"task_posted", "freelancer_assigned", "task_accepted", "freelancer_removed", "task_send_on_review"})
     public void consumeChange(ConsumerRecord<String, String> record) throws JsonProcessingException {

@@ -183,6 +183,11 @@ public class TaskService implements IService<Task, Integer>{
         }
     }
 
+    /**
+     * Retrieves all tasks from the repository.
+     *
+     * @return a list of all tasks
+     */
     @Transactional(readOnly = true)
     public List<Task> findAll(){
         return taskRepo.findAll();

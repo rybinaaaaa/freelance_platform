@@ -48,6 +48,11 @@ public class SolutionService implements IService<Solution, Integer>{
         return solution;
     }
 
+    /**
+     * Retrieves all solutions from the repository.
+     *
+     * @return a list of all tasks
+     */
     @Transactional(readOnly = true)
     public List<Solution> findAll() {
         log.info("Finding all solutions");

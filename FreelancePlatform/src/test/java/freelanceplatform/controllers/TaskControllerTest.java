@@ -346,7 +346,6 @@ public class TaskControllerTest extends IntegrationTestBase {
     }
 
     @Test
-    //todo
     public void assignFreelancerByUserReturnsStatusNoContent() throws Exception {
         Task task = taskService.findById(1).orElse(null);
         Objects.requireNonNull(task);
