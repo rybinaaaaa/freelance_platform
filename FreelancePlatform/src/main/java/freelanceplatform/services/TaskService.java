@@ -231,7 +231,7 @@ public class TaskService implements IService<Task, Integer>{
     @CacheEvict
     public boolean deleteById(Integer id){
         Objects.requireNonNull(id);
-        log.info("Deleting feedback with id {}", id);
+        log.info("Deleting task with id {}", id);
         return taskRepo.findById(id)
                 .map(task -> {
                     task.getCustomer().removePostedTask(task);

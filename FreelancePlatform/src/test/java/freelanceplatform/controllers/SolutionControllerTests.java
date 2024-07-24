@@ -126,7 +126,8 @@ public class SolutionControllerTests extends IntegrationTestBase {
 
     @Test
     public void updateReturnsNotFoundForWrongId() throws Exception {
-        Solution solution = solutionService.getById(1);
+        Solution solution = solutionService.findById(1).orElse(null);
+        Objects.requireNonNull(solution);
         solution.setDescription("new description");
 
         SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
@@ -141,7 +142,8 @@ public class SolutionControllerTests extends IntegrationTestBase {
 
     @Test
     public void updateByUserReturnsStatusNoContent() throws Exception {
-        Solution solution = solutionService.getById(1);
+        Solution solution = solutionService.findById(1).orElse(null);
+        Objects.requireNonNull(solution);
         solution.setTask(task);
         task.setSolution(solution);
         task.setFreelancer(emptyUser);
@@ -161,7 +163,8 @@ public class SolutionControllerTests extends IntegrationTestBase {
 
     @Test
     public void updateByAdminReturnsStatusForbidden() throws Exception {
-        Solution solution = solutionService.getById(1);
+        Solution solution = solutionService.findById(1).orElse(null);
+        Objects.requireNonNull(solution);
         solution.setDescription("new description");
 
         SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
@@ -177,7 +180,8 @@ public class SolutionControllerTests extends IntegrationTestBase {
     @Test
     public void updateByGuestReturnsStatusForbidden() throws Exception {
         emptyUser.setRole(Role.GUEST);
-        Solution solution = solutionService.getById(1);
+        Solution solution = solutionService.findById(1).orElse(null);
+        Objects.requireNonNull(solution);
         solution.setDescription("new description");
 
         SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solution);
@@ -214,18 +218,14 @@ public class SolutionControllerTests extends IntegrationTestBase {
 
     @Test
     public void deleteByUserReturnsStatusNoContent() throws Exception {
-
-        Solution solution = solutionService.getById(1);
-
+        Solution solution = solutionService.findById(1).orElse(null);
+        Objects.requireNonNull(solution);
         task.setFreelancer(emptyUser);
         task.setCustomer(userAdmin);
         task.setSolution(solution);
-
         taskService.save(task);
-
         solution.setTask(task);
         solutionService.save(solution);
-
         mockMvc.perform(delete("/rest/solutions/1")
                         .with(user(new UserDetails(emptyUser))))
                 .andExpect(status().isNoContent());

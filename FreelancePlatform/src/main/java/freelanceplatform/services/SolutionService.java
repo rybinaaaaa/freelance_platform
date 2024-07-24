@@ -5,18 +5,20 @@ import freelanceplatform.data.TaskRepository;
 import freelanceplatform.exceptions.NotFoundException;
 import freelanceplatform.model.Solution;
 import freelanceplatform.model.Task;
-import org.hibernate.Hibernate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @CacheConfig(cacheNames = {"solutions"})
-public class SolutionService {
+@Slf4j
+public class SolutionService implements IService<Solution, Integer>{
 
     private final SolutionRepository solutionRepo;
     private final TaskRepository taskRepo;
@@ -46,6 +48,11 @@ public class SolutionService {
         return solution;
     }
 
+    @Transactional(readOnly = true)
+    public List<Solution> findAll() {
+        log.info("Finding all solutions");
+        return solutionRepo.findAll();
+    }
 
     /**
      * Retrieves a solution by its ID.
@@ -56,11 +63,12 @@ public class SolutionService {
      */
     @Transactional(readOnly = true)
     @Cacheable
-    public Solution getById(Integer id) {
+    public Optional<Solution> findById(Integer id) {
+        log.info("Get task by id {}.", id);
         Objects.requireNonNull(id);
         Optional<Solution> solution = solutionRepo.findById(id);
         if (solution.isEmpty()) throw new NotFoundException("Solution identified by " + id + " not found.");
-        return solution.get();
+        return solution;
     }
 
     /**
@@ -110,27 +118,24 @@ public class SolutionService {
     }
 
     /**
-     * Deletes a solution.
+     * Deletes a solution by its ID. This method is transactional and will evict any related caches upon successful execution.
+     * It ensures that the task associated with the solution is updated appropriately to remove the reference to the deleted solution.
      *
-     * @param solution Solution object to delete.
-     * @throws NotFoundException if the solution to delete is not found.
+     * @param id the ID of the solution to be deleted. Must not be null.
+     * @return {@code true} if the solution was found and deleted successfully, {@code false} otherwise.
+     * @throws NullPointerException if the provided ID is null.
      */
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(key = "#solution.id"),
-            @CacheEvict(value = "tasks", condition = "#solution.task != null", key = "#solution.task.id")
-    })
-    public void delete(Solution solution) {
-        Objects.requireNonNull(solution);
-
-        if (exists(solution.getId())) {
-
-            Optional.ofNullable(solution.getTask())
-                    .ifPresent(task -> task.setSolution(null));
-
-            solutionRepo.delete(solution);
-        } else {
-            throw new NotFoundException("Solution to update identified by " + solution.getId() + " not found.");
-        }
+    @CacheEvict
+    public boolean deleteById(Integer id){
+        Objects.requireNonNull(id);
+        log.info("Deleting task with id {}", id);
+        return solutionRepo.findById(id)
+                .map(solution -> {
+                    Optional.ofNullable(solution.getTask())
+                            .ifPresent(task -> task.setSolution(null));
+                    solutionRepo.delete(solution);
+                    return true;
+                }).orElse(false);
     }
 }

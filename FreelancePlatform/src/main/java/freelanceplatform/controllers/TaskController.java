@@ -64,8 +64,6 @@ public class TaskController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskReadUpdate> getById(@PathVariable Integer id) {
-//        final TaskReadUpdate taskReadUpdate = mapper.toTaskReadUpdate(taskService.findById(id).get());
-//        return ResponseEntity.ok(taskReadUpdate);
         return taskService.findById(id)
                 .map(task -> ResponseEntity.ok(mapper.toTaskReadUpdate(task))).orElse(ResponseEntity.notFound().build());
     }

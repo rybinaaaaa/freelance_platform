@@ -9,7 +9,6 @@ import freelanceplatform.model.security.UserDetails;
 import freelanceplatform.services.SolutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -53,8 +53,8 @@ public class SolutionController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SolutionReadUpdate> getById(@PathVariable Integer id) {
-        SolutionReadUpdate solutionReadUpdate = mapper.toSolutionReadUpdate(solutionService.getById(id));
-        return ResponseEntity.ok(solutionReadUpdate);
+        return solutionService.findById(id)
+                .map(solution -> ResponseEntity.ok(mapper.toSolutionReadUpdate(solution))).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -84,9 +84,9 @@ public class SolutionController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id, Authentication auth) {
-        Solution solution = solutionService.getById(id);
-        if (!hasAccess(solution, auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        solutionService.delete(solution);
+        Solution solution = solutionService.findById(id).orElse(null);
+        if (!hasAccess(Objects.requireNonNull(solution), auth)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        solutionService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

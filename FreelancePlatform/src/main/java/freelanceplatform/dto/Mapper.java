@@ -305,8 +305,7 @@ public class Mapper {
     }
 
     public Solution toSolution(SolutionReadUpdate updatedSolution, Integer id) {
-
-        return Optional.ofNullable(solutionService.getById(id))
+        return solutionService.findById(id)
                 .map(solution -> {
                     solution.setDescription(updatedSolution.getDescription());
                     solution.setLink(updatedSolution.getLink());
