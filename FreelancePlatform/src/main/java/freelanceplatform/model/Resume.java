@@ -20,7 +20,6 @@ public class Resume extends AbstractEntity{
     private String filename;
 
     @Column
-//    or @JdbcType(VarbinaryJdbcType.class)
     @JdbcTypeCode(Types.BINARY)
     private byte[] content;
 
