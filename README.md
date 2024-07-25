@@ -8,20 +8,20 @@ The project aims to build a freelance platform using Spring Boot and other moder
 https://docs.google.com/document/d/14QOzUKwhIsbmJxZe33ymWSRt-85Maz07XX8YSVdFAus/edit?usp=sharing
 
 ## Requires
-- Java/SpringBoot/React - ano
-- Git - ano
-- DB Postgres - ano
-- Cache Hazelcast - ano
-- Kafka - ano
-- Authorization base64 - ano
-- Interceptors - ano
-- REST - ano
-- Deploy on Render - ano
-- Vhodna architektura - ano, event base (notifications)
-- Instruction - ano
-- Elasticsearch - 
-- Patterns - ano
-- Cloud services - ne
+- Java/SpringBoot/React - yes
+- Git - yes
+- DB Postgres - yes
+- Cache Hazelcast - yes
+- Kafka - yes
+- Authorization base64 - yes
+- Interceptors - yes
+- REST - yes
+- Deploy on Render - yes
+- Vhodna architektura - yes, event base (notifications)
+- Instruction - yes
+- Elasticsearch - no
+- Patterns - yes
+- Cloud services - no
 
 ## Prerequisites
 
@@ -81,6 +81,7 @@ In this project, we have applied the following patterns:
 
 - DTO
 - Dependency injection
+- Factory - path: notificationService/topics
 - Strategy - path: notificationService/notificationStrategies
 - Builder - Mapper.userDTOToUser() method
 - Modular approach - frontend with React
