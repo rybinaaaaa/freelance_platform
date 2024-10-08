@@ -8,7 +8,7 @@ The project aims to build a freelance platform using Spring Boot and other moder
 https://docs.google.com/document/d/14QOzUKwhIsbmJxZe33ymWSRt-85Maz07XX8YSVdFAus/edit?usp=sharing
 
 ## Requires
-- Java/SpringBoot/React - yes
+- Java/SpringBoot - yes
 - Git - yes
 - DB Postgres - yes
 - Cache Hazelcast - yes
